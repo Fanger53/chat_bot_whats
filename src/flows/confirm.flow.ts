@@ -8,7 +8,7 @@ const generatePromptToFormatDate = (history: string) => {
     const prompt = `Fecha de Hoy:${getFullCurrentDate()}, Basado en el Historial de conversacion: 
     ${history}
     ----------------
-    Fecha ideal:...dd / mm hh:mm`
+    Fecha ideal: dd / mm / yyyy hh:mm`
 
     return prompt
 }
