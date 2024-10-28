@@ -3,90 +3,204 @@ import { generateTimer } from "../utils/generateTimer";
 import { getHistoryParse, handleHistory } from "../utils/handleHistory";
 import AIClass from "../services/ai";
 import { getFullCurrentDate } from "src/utils/currentDate";
-import getUserInfo from "../services/endpoints/userInformationService"
+import getUserInfo from "../services/endpoints/userInformationService";
 
+// Función auxiliar para manejar el estado de forma segura
+const getStateData = async (state) => {
+    try {
+        const currentState = await state.getAllState();
+        return currentState || {};
+    } catch (error) {
+        console.log('[ERROR getting state]:', error);
+        return {};
+    }
+};
 
-const PROMPT_SELLER = `
-        1. Entra un mensaje con el siguiente texto: Hola, hoy es mi cumpleaños🎉 y quiero saber mas sobre el obsequio por ser usuario MotoSmart
-    2. Cuando recibes este mensaje  debes de saludar siempre diciendo: Gracias por comunicarte con MotoSmart, la única app diseñada para motociclistas como tu 😎🛵
-    - Busca en {INFO_USUARIO} si trae data de este formato {"nombre": "Leonardo Castillo", "puntos_actuales": 2000} si es asi el numero desde donde nos escriben esta registrado y tiene algún nombre  registrado, después  puedes continuar el saludo con el nombre, ejemplo de esto: Hola Leonardo, Mi nombre es sofia y  voy a ser tu asesora asignada, por favor dime como puedo ayudarte el día de hoy?
-- Si el teléfono no tiene asignado un nombre en nuestra base de datos solo saluda asi: Hola, Mi nombre es sofia, y voy a ser tu asesora asignada, por favor dime como puedo ayudarte el día de hoy?
-    4. Ahora felicita al usuario por su cumpleaños llamándolo por su nombre, ejemplo, asi:  Leonardo Primero, permítame felicitarle por su cumpleaños 🛵🎉🥳 todo el equipo MotoSmart desea que tengas un año lleno de muchos éxitos, bendiciones y mucha salud para que alcances todas tu metas🤜🤛
-    5. Recuerdale que guarde nuestro numero, por ejemplo asi: Leonardo por favor no olvides guardar nuestro número 3157444950 para que estes enterado de todos los descuentos y promociones que tenemos para ti
-    6. Ahora pide al usuario que te comparta el correo electrónico o su numero celular con el cual esta registrado en motosmart para proceder con la entrega del obsequio
-    7. Una vez el usuario te envié su correo o numero de celular confirmalo en la base de datos e identifica cuantos motopuntos tiene en su perfil, una vez tengas el numero de motopuntos que tiene el usuario pídele al usuario que abra la app de motosmart y que  confirme si tiene esa cantidad de motopuntos en su perfil
-    8. Cuando el usuario te confirme la cantidad de motopuntos dile lo siguiente: Ok, perfecto🤟, (aquí dile su nombre), Por ser tu cumpleaños, MotoSmart quiere obsequiarte 1.000 MotoPuntos para que puedas pasar a cualquiera de las tiendas aliadas a canjear uno de nuestros obsequios, podrás elegir uno entre llaveros, balaclavas gorras, porta documentos  entre otros🔥🎉🚀🛵, 
-    9. Ahora carga a su cuenta los 1.000 motopuntos y cuentale al usuario que has cargado sus 1.000 motopuntos y que por favor compruebe ahora el valor que le aparece en su perfil.
-    10. Preguntale al usuario que le parece el obsequio
-    11. Identifica si el usuario no es  un usuario premium para darle un bono de descuento para que adquiera premium 
-    12. Si el usuario no es premium cuéntale sobre el bono de descuento que tenemos por su cumpleaños y que adicional  le obsequiaremos 30 días adicionales a su plan
-    13. Puedes empezar a contarte sobre este bono asi:
-Ok,   Espera....😌
-(aquí utiliza el nombre del usuario)¡Aun no terminamos de entregarte sorpresas en tu cumpleaños🎉😁🎊🥳
-Ahora queremos entregarte un bono del 30% de dcto*, MAS 3️⃣0️⃣ días adicionales para que empieces a disfrutar de la membresía MotoSmart GPS, en  la cual tendrás los siguientes servicios. 
-1️⃣ Póliza de vida por  *2.000.000* de pesos 
-2️⃣ Acceso a un  doctor online 24/7 🧑‍⚕️
-3️⃣ Instalación de dispositivo GPS para tu moto🔧📡
-4️⃣ Visualización en tiempo real de tu moto👀🛵
-5️⃣ Reporte de recorridos🗒️
-6️⃣ Podrás apagar tu moto en caso de pérdida o hurto📍📲
-7️⃣ Acompañamiento de la central las  24 horas los 365 días del año💪  
-8️⃣ equipo de reacción motorizado 😎🤟🛵
-9️⃣ Entérate de las primicias y de los mejores descuentos y promociones de nuestros aliados🎉🤩🤩
-🔟Recibe *10.000 MotoPuntos*  para que los cambies por productos o servicios en nuestros catálogo, de esta manera ahorras plática en tus compras🫰
+const PROMPT_BIRTHDAY = `Eres el asistente virtual en la prestigiosa empresa "Motosmart", la cual es una app y la casa matriz esta en Cali Colombia. Tu principal responsabilidad es guiar al usuario que está de cumpleaños.
 
-💲Recibe un bono de descuento por $25.000 para que saques tu revisión técnico mecanica🛵
-💲Recibe un bono para tus próximas vacaciones por $200.000 🏖️
+FECHA DE HOY: {CURRENT_DAY}
+INFORMACIÓN DEL USUARIO: {INFO_USUARIO}
 
-Pregunta en esta parte que le parecen todos estos beneficios
+INSTRUCCIONES DE RESPUESTA:
 
-Después persuade al usuario de como proteger su moto de ladrones y que si no tiene dinero tenemos un método de financiación, puedes proponer algo así:
+1. Si NO hay información del usuario (INFO_USUARIO está vacío):
+   - Saluda: "Gracias por comunicarte con MotoSmart, la única app diseñada para motociclistas como tu 😎🛵"
+   - Di: "Para poder entregarte tu regalo de cumpleaños, necesito confirmar algunos datos."
+   - Pide: "Por favor, compárteme tu nombre completo."
+   - Espera la respuesta del usuario.
 
-✳️ Proteje tu motocicleta de los ladrones  y conoce en todo momento *en dónde se encuentra*😏
-✳️¿No tienes el dinero?* No te preocupes, nosotros te lo financiamos solo con tu cédula😉
+2. Si HAY información del usuario (formato: {"nombre": "Nombre", "puntos_actuales": X}):
+   - Saluda usando el nombre: "Hola [nombre], gracias por comunicarte con MotoSmart, la única app diseñada para motociclistas como tu 😎🛵"
+   - Felicita: "[nombre], permítame felicitarle por su cumpleaños 🛵🎉🥳"
+   - Continúa con el proceso de regalo según los puntos actuales.
 
-Pregúntale al usuario si quiere que le agendemos una cita 
+3. Proceso de regalo:
+   - Recuerda guardar número: "Por favor guarda nuestro número 3157444950"
+   - Verifica correo/celular registrado
+   - Confirma MotoPuntos actuales
+   - Otorga regalo de 1000 MotoPuntos
+   - Solicita verificación en la app
 
 HISTORIAL DE CONVERSACIÓN:
 --------------
 {HISTORIAL_CONVERSACION}
---------------
+-------------
+
 Respuesta útil:`;
 
+const flowCaptureUserData = addKeyword(['cumpleaños', 'cumple', 'regalo'])
+    .addAction(async (ctx, { flowDynamic, state }) => {
+        try {
+            // Intenta obtener información del usuario desde la API
+            const userInfo = await getUserInfo(ctx.from);
 
-export const generatePromptSeller = async (history: string, phone: string) => {
-    const nowDate = getFullCurrentDate()
-    const userInfo = await getUserInfo(phone);
-    console.log(userInfo)
-    return PROMPT_SELLER.replace('{HISTORIAL_CONVERSACION}', history).replace('{CURRENT_DAY}', nowDate).replace('{INFO_USUARIO}', userInfo || '')
-};
-
-/**
- * Hablamos con el PROMPT que sabe sobre las cosas basicas del negocio, info, precio, etc.
- */
-const flowBirthday = addKeyword(EVENTS.ACTION).addAction(async (ctx, { state, flowDynamic, extensions }) => {
-    try {
-        const ai = extensions.ai as AIClass
-        const history = getHistoryParse(state)
-        const prompt = await generatePromptSeller(history, ctx.from);
-
-        const text = await ai.createChat([
-            {
-                role: 'system',
-                content: prompt
+            if (userInfo && userInfo.nombre && userInfo.puntos_actuales !== undefined) {
+                // Si encuentra información del usuario, actualiza el estado
+                await state.update({ userInfo });
+                console.log("si encuentra la informacion")
+                // Responde con un mensaje personalizado
+                await flowDynamic([
+                    {
+                        body: `Gracias por comunicarte con MotoSmart, la única app diseñada para motociclistas como tu 😎🛵`,
+                        delay: 1000
+                    },
+                    {
+                        body: `¡Hola ${userInfo.nombre}! Veo que tienes ${userInfo.puntos_actuales} MotoPuntos acumulados. 🎉`,
+                        delay: 1500
+                    },
+                    {
+                        body: `${userInfo.nombre}, permíteme felicitarte por tu cumpleaños 🛵🎉🥳 todo el equipo MotoSmart desea que tengas un año lleno de muchos éxitos, bendiciones y mucha salud para que alcances todas tus metas🤜🤛`,
+                        delay: 2000
+                    }
+                ]);
+                
+                return;
             }
-        ])
 
-        await handleHistory({ content: text, role: 'assistant' }, state)
-
-        const chunks = text.split(/(?<!\d)\.\s+/g);
-        for (const chunk of chunks) {
-            await flowDynamic([{ body: chunk.trim(), delay: generateTimer(150, 250) }]);
+            // Si no encuentra información, inicia el flujo de captura
+            await flowDynamic([
+                {
+                    body: 'Gracias por comunicarte con MotoSmart, la única app diseñada para motociclistas como tu 😎🛵\nPara entregarte tu regalo de cumpleaños, necesito confirmar algunos datos.',
+                    delay: 1000
+                }
+            ]);
+        } catch (error) {
+            console.log('[ERROR in initial API check]:', error);
+            // Si hay error en la API, inicia el flujo de captura normal
+            await flowDynamic('Gracias por comunicarte con MotoSmart, la única app diseñada para motociclistas como tu 😎🛵\nPara entregarte tu regalo de cumpleaños, necesito confirmar algunos datos.');
         }
-    } catch (err) {
-        console.log(`[ERROR]:`, err)
-        return
-    }
-})
+    })
+    .addAnswer(
+        '¿Me podrías confirmar tu nombre completo?',
+        { capture: true },
+        async (ctx, { flowDynamic, state }) => {
+            console.log("aqui cuando no encuentra el nombre en la api ")
+            console.log(state)
+            try {
+                const userName = ctx.body;
+                await state.update({ userName });
+                return flowDynamic(`Gracias ${userName}! ¿Me podrías confirmar tu número de celular registrado en MotoSmart?`);
+            } catch (error) {
+                console.log('[ERROR capturing name]:', error);
+                return flowDynamic('Lo siento, hubo un error al procesar tu nombre. ¿Podrías intentarlo nuevamente?');
+            }
+        }
+    )
+    .addAnswer(
+        null,
+        { capture: true },
+        async (ctx, { flowDynamic, state }) => {
+            try {
+                const phone = ctx.body;
+                const currentState = await getStateData(state);
+                
+                // Intenta obtener información del usuario nuevamente con el número proporcionado
+                const userInfo = await getUserInfo(phone);
+                
+                if (userInfo && userInfo.puntos_actuales !== undefined) {
+                    // Actualiza el estado con la información completa
+                    const userData = {
+                        ...userInfo,
+                        nombre: currentState.userName || userInfo.nombre
+                    };
+                    await state.update({ userInfo: userData, phone });
+                    
+                    return flowDynamic([
+                        {
+                            body: `¡Excelente ${userData.nombre}! He confirmado tu información. Tienes ${userData.puntos_actuales} MotoPuntos acumulados. 🎉`,
+                            delay: 1000
+                        },
+                        {
+                            body: 'Ahora procederé con la entrega de tu regalo de cumpleaños. 🎁',
+                            delay: 1500
+                        }
+                    ]);
+                } else {
+                    return flowDynamic([
+                        {
+                            body: 'Lo siento, no encontré tu registro en nuestra base de datos con ese número. ¿Podrías verificar si el número está correcto?',
+                            delay: 1000
+                        }
+                    ]);
+                }
+            } catch (error) {
+                console.log('[ERROR capturing phone]:', error);
+                return flowDynamic('Hubo un error al verificar tu información. Por favor, intenta nuevamente.');
+            }
+        }
+    );
 
-export { flowBirthday }
+
+    export const generatePromptSeller = async (history: string, phone: string) => {
+        const nowDate = getFullCurrentDate()
+        const userInfo = await getUserInfo(phone);
+        console.log(userInfo)
+        return PROMPT_BIRTHDAY.replace('{HISTORIAL_CONVERSACION}', history).replace('{CURRENT_DAY}', nowDate).replace('{INFO_USUARIO}', userInfo || '')
+    };
+// Flujo principal mejorado
+const flowBirthday = addKeyword(EVENTS.ACTION)
+    .addAction(async (ctx, { state, flowDynamic, extensions }) => {
+        try {
+            const ai = extensions.ai as AIClass;
+            const history = getHistoryParse(state);
+            const currentState = await getStateData(state);
+            
+            // Usar información del estado si está disponible
+            let userInfoForPrompt = '';
+            console.log(currentState.userInfo)
+            if (currentState.userInfo) {
+                userInfoForPrompt = JSON.stringify(currentState.userInfo);
+            } else {
+                const userInfo = await getUserInfo(ctx.from);
+                if (userInfo) {
+                    userInfoForPrompt = JSON.stringify(userInfo);
+                    await state.update({ userInfo });
+                }
+            }
+
+            const prompt = await generatePromptSeller(history, ctx.from);
+            const promptWithUserInfo = prompt.replace('{INFO_USUARIO}', userInfoForPrompt || '');
+
+            const text = await ai.createChat([
+                {
+                    role: 'system',
+                    content: promptWithUserInfo
+                }
+            ]);
+
+            await handleHistory({ content: text, role: 'assistant' }, state);
+
+            const chunks = text.split(/(?<!\d)\.\s+/g);
+            for (const chunk of chunks) {
+                await flowDynamic([{ 
+                    body: chunk.trim(), 
+                    delay: generateTimer(150, 250) 
+                }]);
+            }
+        } catch (err) {
+            console.log(`[ERROR in flowBirthday]:`, err);
+            await flowDynamic('Lo siento, tuve un problema procesando tu solicitud. ¿Podrías intentarlo nuevamente?');
+        }
+    });
+
+export { flowBirthday, flowCaptureUserData };
