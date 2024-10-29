@@ -64,6 +64,7 @@ export const generatePromptSeller = async (history: string, phone: string) => {
  * Hablamos con el PROMPT que sabe sobre las cosas basicas del negocio, info, precio, etc.
  */
 const flowSeller = addKeyword(EVENTS.ACTION).addAction(async (ctx, { state, flowDynamic, extensions }) => {
+    console.log("flowSeller")
     try {
         const ai = extensions.ai as AIClass
         const history = getHistoryParse(state)
