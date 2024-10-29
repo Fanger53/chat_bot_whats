@@ -8,13 +8,13 @@ const handleHistory = async (inside: History, _state: BotState) => {
     await _state.update({ history })
 }
 
-const getHistory = (_state: BotState, k = 6) => {
+const getHistory = (_state: BotState, k = 15) => {
     const history = _state.get<History[]>('history') ?? []
     const limitHistory = history.slice(-k)
     return limitHistory
 }
 
-const getHistoryParse = (_state: BotState, k = 6): string => {
+const getHistoryParse = (_state: BotState, k = 15): string => {
     const history = _state.get<History[]>('history') ?? []
     const limitHistory = history.slice(-k)
     return limitHistory.reduce((prev, current) => {
