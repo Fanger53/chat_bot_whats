@@ -4,9 +4,8 @@ import { getHistoryParse, handleHistory } from "../utils/handleHistory";
 import AIClass from "../services/ai";
 import { getFullCurrentDate } from "src/utils/currentDate";
 import getUserInfo from "../services/endpoints/userInformationService";
-import flowPhoneNumber from "./flowHelpers/phoneNumber.flow";
-import flowGivePoints from "./flowHelpers/GivePoints.flow";
-import postPoints from "src/services/endpoints/postPoints";
+import flowUserNotInfo from "./flowHelpers/userNotInfo.flow";
+import flowUserWithInfo from "./flowHelpers/userWithInfo.flow";
 
 // Función auxiliar para manejar el estado de forma segura
 const getStateData = async (state) => {
@@ -19,30 +18,6 @@ const getStateData = async (state) => {
     }
 };
 
-const POSITIVE_WORDS = [
-    'si',
-    'sí',
-    'ok',
-    'okay',
-    'yes',
-    'yeah',
-    'claro',
-    'dale',
-    'por supuesto',
-    'afirmativo',
-    'correcto',
-    'efectivamente',
-    'exacto',
-    'vale'
-];
-
-const NEGATIVE_WORDS = [
-    'no',
-    'nop',
-    'nope',
-    'negativo',
-    'nel'
-];
 
 const PROMPT_BIRTHDAY = `Eres el asistente virtual en la prestigiosa empresa "Motosmart", la cual es una app y la casa matriz esta en Cali Colombia. Tu principal responsabilidad es guiar al usuario que está de cumpleaños.
 
@@ -77,155 +52,24 @@ HISTORIAL DE CONVERSACIÓN:
 Respuesta útil:`;
 
 const flowCaptureUserData = addKeyword(EVENTS.ACTION)
-    .addAction(async (ctx, { flowDynamic, state }) => {
+    .addAction(async (ctx, { flowDynamic, state, gotoFlow }) => {
         try {
             const userInfo = await getUserInfo(ctx.from);
             console.log("Checking user info:", userInfo);
             
             if (userInfo && userInfo.nombre && userInfo.puntos_actuales !== undefined) {
-                await flowDynamic([
-                    {
-                        body: `Gracias por comunicarte con MotoSmart, la única app diseñada para motociclistas como tu 😎🛵`,
-                        delay: 1000
-                    },
-                    {
-                        body: ` Hola ${userInfo.nombre}, Mi nombre es sofia y  voy a ser tu asesora asignada`,
-                        delay: 2500
-                    },
-                    {
-                        body: `${userInfo.nombre}, permíteme felicitarte por tu cumpleaños 🛵🎉🥳 todo el equipo MotoSmart desea que tengas un año lleno de muchos éxitos, bendiciones y mucha salud para que alcances todas tus metas🤜🤛`,
-                        delay: 2000
-                    },
-                    {
-                        body: `y ${userInfo.nombre} por favor no olvides guardar nuestro número 3157444950 para que estes enterado de todos los descuentos y promociones que tenemos para ti`,
-                        delay: 2500 
-                    },
-                    {
-                        body: `¿Me podrías confirmar tu nombre?`,
-                        delay: 2500 
-                    }
-                ]);
+                await state.update({ userName: userInfo.nombre,  points: userInfo.puntos_actuales });
+                return gotoFlow(flowUserWithInfo);
             } else {
                 // Si no hay info del usuario, iniciamos el flujo de captura
-                await flowDynamic([{
-                    body: 'Gracias por comunicarte con MotoSmart, la única app diseñada para motociclistas como tu 😎🛵\nPara entregarte tu regalo de cumpleaños, necesito confirmar algunos datos.',
-                    delay: 1000
-                }]);
+                return gotoFlow(flowUserNotInfo)
             }
         } catch (error) {
             console.error('[ERROR in initial API check]:', error);
             await flowDynamic('Lo siento, hubo un error. Vamos a proceder con la captura de datos.');
+            return true;
         }
     })
-    .addAnswer(
-        '¿Me podrías confirmar tu nombre?',
-        { capture: true, buttons: [{ body: 'Cancelar registro' }] },
-        async (ctx, { flowDynamic, state }) => {
-            console.log("Capturing name:", ctx.body);
-            if (ctx.body === 'Cancelar registro') {
-                return flowDynamic('Has cancelado el registro. ¿En qué más puedo ayudarte?');
-            }
-            
-            try {
-                const userName = ctx.body;
-                await state.update({ userName: userName });
-                await flowDynamic(`Gracias ${userName}! ¿Me podrías confirmar tu número de celular registrado en MotoSmart?`);
-            } catch (error) {
-                console.error('[ERROR capturing name]:', error);
-                await flowDynamic('Hubo un error. ¿Podrías decirme tu nombre nuevamente?');
-            }
-        }
-    )
-    .addAnswer(
-        ['Por favor, ingresa tu número de celular registrado', 'Asegúrate de ingresarlo en formato correcto'],
-        { capture: true },
-        async (ctx, { flowDynamic, state, gotoFlow, endFlow }) => {
-            console.log("Capturing phone:", ctx.body);
-            try {
-                const phone = `57${ctx.body.trim()}`
-                const currentState = state.getMyState()
-                const userInfo = await getUserInfo(phone);
-
-                if (userInfo && userInfo.puntos_actuales !== undefined) {
-                    const userData = {
-                        ...userInfo,
-                        nombre: currentState.userName || userInfo.nombre
-                    };
-                    await state.update({ phone:  phone });
-
-                    await flowDynamic([
-                        {
-                            body: `¡Excelente ${userData.nombre}! He confirmado tu información. Tienes ${userData.puntos_actuales} MotoPuntos acumulados. 🎉`,
-                            delay: 1000
-                        },
-                    ]);
-                    return true;
-                } else {
-                    await flowDynamic([
-                        {
-                            body: 'No encontré tu registro con ese número. ¿Podrías verificarlo nuevamente?',
-                            delay: 1000
-                        }
-                    ]);
-                    console.log("lina 170")
-                    // Volver a pedir el número
-                    return gotoFlow(flowPhoneNumber)
-                }
-            } catch (error) {
-                console.error('[ERROR capturing phone]:', error);
-                await flowDynamic('Ocurrió un error. ¿Podrías ingresar tu número nuevamente?');
-                return false;
-            }
-        }
-    )
-    .addAnswer(
-        ['Por favor, confirma si los motopuntos coinciden con tu app (responde sí o no)'],
-        { capture: true },
-        async (ctx, { flowDynamic, state }) => {
-            try {
-                const userMessage = ctx.body.toLowerCase();
-                
-                // Verificar respuesta positiva
-                const isPositive = POSITIVE_WORDS.some(word => userMessage.includes(word));
-                // Verificar respuesta negativa
-                const isNegative = NEGATIVE_WORDS.some(word => userMessage.includes(word));
-                
-                if (isPositive) {
-                    await postPoints(ctx.from, "true");
-                    await flowDynamic([
-                        {
-                            body: '¡Registro completado! Procederemos con tu regalo de cumpleaños. 🎉',
-                            delay: 1000
-                        }
-                    ]);
-                    await state.update({ registered: true });
-                } else if (isNegative) {
-                    await flowDynamic([
-                        {
-                            body: 'Entiendo. Si cambias de opinión, puedes intentarlo nuevamente más tarde.',
-                            delay: 1000
-                        }
-                    ]);
-                } else {
-                    await flowDynamic([
-                        {
-                            body: 'No he podido entender tu respuesta. Por favor, responde con un "sí" o "no".',
-                            delay: 1000
-                        }
-                    ]);
-                }
-            } catch (error) {
-                console.error('Error en el proceso de registro:', error);
-                await flowDynamic([
-                    {
-                        body: 'Lo siento, ha ocurrido un error. Por favor, intenta nuevamente.',
-                        delay: 1000
-                    }
-                ]);
-            }
-        }
-    );
-
 
     export const generatePromptSeller = async (history: string, phone: string) => {
         const nowDate = getFullCurrentDate()

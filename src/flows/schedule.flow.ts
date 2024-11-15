@@ -46,6 +46,11 @@ const generateSchedulePrompt = (summary: string, history: string) => {
  * Hable sobre todo lo referente a agendar citas, revisar historial saber si existe huecos disponibles
  */
 const flowSchedule = addKeyword(EVENTS.ACTION).addAction(async (ctx, { extensions, state, flowDynamic }) => {
+    console.log("flow agendar")
+    const currentState = state.getMyState()
+    if(currentState.birthday === true){
+        return ""
+    }
     await flowDynamic('dame un momento para consultar la agenda...')
     const ai = extensions.ai as AIClass
     const history = getHistoryParse(state)

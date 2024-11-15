@@ -68,7 +68,7 @@ const flowConfirm = addKeyword(EVENTS.ACTION).addAction(async (_, { flowDynamic 
 
         await appToCalendar(text)
         clearHistory(state)
-        await flowDynamic('Listo! agendado Buen dia')
+        await flowDynamic("Gracias por comunicarte con MotoSmart 🤜🤛\nSe un motociclista ejemplar, queremos que siempre regreses a casa🛵🤟😎")
     })
 
 export { flowConfirm }
