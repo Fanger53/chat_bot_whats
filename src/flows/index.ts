@@ -14,11 +14,11 @@ import flowNoAnswer from "./flowHelpers/birthday/noAnswer.flow";
 import flowSmartTravel from "./flowHelpers/birthday/smartTravel.flow";
 import flowNegativeAnswerSmartTravel from "./flowHelpers/birthday/negativeAnswerSmartTravel.flow";
 import flowInTheMiddle from "./flowHelpers/birthday/middle.flow";
-import flowInfo from "./info.flows";
+import flowFinalTimeout from "./flowHelpers/birthday/finalTimeout.flow";
 
 
 
 /**
  * Declaramos todos los flujos que vamos a utilizar
  */
-export default createFlow([welcomeFlow, flowSeller, flowSchedule, flowConfirm, flowBirthday, flowCaptureUserData, flowGivePoints, flowPhoneNumber, flowUserNotInfo, flowUserWithInfo, flowDownloadApp, flowFinal, flowNoAnswer, flowSmartTravel, flowNegativeAnswerSmartTravel, flowInTheMiddle, flowInfo])
+export default createFlow([welcomeFlow, flowSeller, flowSchedule, flowConfirm, flowBirthday, flowCaptureUserData, flowGivePoints, flowPhoneNumber, flowUserNotInfo, flowUserWithInfo, flowDownloadApp, flowFinal, flowNoAnswer, flowSmartTravel, flowNegativeAnswerSmartTravel, flowInTheMiddle, flowFinalTimeout])
