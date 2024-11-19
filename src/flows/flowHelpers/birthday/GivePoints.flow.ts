@@ -8,15 +8,15 @@ import flowInTheMiddle from "./middle.flow";
 const flowGivePoints = addKeyword(EVENTS.ACTION)
     .addAction(async (ctx, { flowDynamic, state, gotoFlow }) => {
         try {
-            const userInfo = await getUserInfo(ctx.from);
-            console.log('flowUserWithInfo')
-            console.log("Checking user info:", userInfo);
+            console.log('flowGivePoints')
+            const currentState = state.getMyState() || {};
+            console.log(currentState)
+            console.log(currentState.userName)
             
-            if (userInfo && userInfo.nombre && userInfo.puntos_actuales !== undefined) {
-                await state.update({ userName: userInfo.nombre,  points: userInfo.puntos_actuales, is_premium: userInfo.is_premium });
+            if (currentState && currentState.userName !== "") {
                 await flowDynamic([
                     {
-                        body: `${userInfo.nombre}, permíteme felicitarte por tu cumpleaños 🛵🎉🥳 todo el equipo MotoSmart desea que tengas un año lleno de muchos éxitos, bendiciones y mucha salud para que alcances todas tus metas🤜🤛`,
+                        body: `${currentState.userName}, permíteme felicitarte por tu cumpleaños 🛵🎉🥳 todo el equipo MotoSmart desea que tengas un año lleno de muchos éxitos, bendiciones y mucha salud para que alcances todas tus metas🤜🤛`,
                         delay: 2000
                     },
 

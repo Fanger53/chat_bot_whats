@@ -9,6 +9,7 @@ import { flowSchedule } from "src/flows/schedule.flow";
 import { getHistoryParse, handleHistory } from "src/utils/handleHistory";
 import { getCurrentCalendar } from "src/services/calendar";
 import { getFullCurrentDate } from "src/utils/currentDate";
+import flowFinalTimeout from "./finalTimeout.flow";
 
 const PROMPT_SCHEDULE = `
 Como ingeniero de inteligencia artificial especializado en la programación de reuniones, tu objetivo es analizar la conversación y determinar la intención del cliente de programar una reunión, así como su preferencia de fecha y hora. La reunión durará aproximadamente 45 minutos y solo puede ser programada entre las 9am y las 4pm, de lunes a viernes, y solo para la semana en curso.
@@ -54,7 +55,7 @@ const flowInTheMiddle = addKeyword(EVENTS.ACTION)
         await flowDynamic([
             {
                 body: `Ok, perfecto🤟, ${currentState.userName}, MotoSmart te regala 1.000 MotoPuntos para que los uses en cualquiera de nuestras tiendas aliadas y canjees un obsequio especial. Puedes elegir entre llaveros, balaclavas, gorras y más. 🔥🚀🛵 \n\n¿Que te parece esto que te estoy contando?`,
-                delay: 2000
+                delay: 1000
             },
         ]);
         
@@ -100,7 +101,7 @@ const flowInTheMiddle = addKeyword(EVENTS.ACTION)
                 {
                     body: 'Aqui te envio una  imagen de donde puedes ver la cantidad de MotoPuntos en tu perfil\npor favor validalo para cargar los puntos de obsequio🤜🏼🤛🏼',
                     media: 'https://i.ibb.co/Ph1NLvV/488ec2cc-8807-42e8-b3e2-ba91c21aab93.jpg',
-                    delay: 2000
+                    delay: 1000
                 }
                         
             ]);
@@ -148,7 +149,7 @@ const flowInTheMiddle = addKeyword(EVENTS.ACTION)
         
                     // Si se cumplió el timeout, ir al flujo final
                     if (result === 'timeout') {
-                        return gotoFlow(flowFinal);
+                        return gotoFlow(flowFinalTimeout);
                     }
                 }
                 const userMessage = ctx.body.toLowerCase();
@@ -252,7 +253,8 @@ const flowInTheMiddle = addKeyword(EVENTS.ACTION)
         
                     // Si se cumplió el timeout, ir al flujo final
                     if (result === 'timeout') {
-                        return gotoFlow(flowFinal);
+                        console.log('linea 255 se acabo el tiempo')
+                        return gotoFlow(flowFinalTimeout);
                     }
                 }
                 const userMessage = ctx.body.toLowerCase();

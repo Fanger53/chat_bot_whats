@@ -4,6 +4,7 @@ import { getHistoryParse, handleHistory } from "../utils/handleHistory";
 import AIClass from "../services/ai";
 import { getFullCurrentDate } from "src/utils/currentDate";
 import getUserInfo from "../services/endpoints/userInformationService"
+import generalInfo from "src/utils/general_info";
 
 
 const PROMPT_SELLER = `Eres una asistente de motosmart actua asi FECHA DE HOY: {CURRENT_DAY}
@@ -48,15 +49,17 @@ export const generatePromptSeller = (history: string, nombre: string, body: stri
 /**
  * Hablamos con el PROMPT que sabe sobre las cosas basicas del negocio, info, precio, etc.
  */
-const flowSeller = addKeyword(EVENTS.ACTION).addAction({capture:true}, async (ctx, { state, flowDynamic, extensions, gotoFlow }) => {
+const flowSeller = addKeyword(EVENTS.ACTION).addAction(async (ctx, { state, flowDynamic, extensions, gotoFlow }) => {
     console.log("flowSeller")
+    const currentState = state.getMyState() || {};
+    console.log(currentState.birthday)
+    if(currentState.birthday === true){
+        return ""
+    }
     try {
-        const userInfo = await getUserInfo(ctx.from);
-        const nombre = userInfo.nombre
-        await state.update({ userName: nombre,  points: userInfo.puntos_actuales })
         const ai = extensions.ai as AIClass
         const history = getHistoryParse(state)
-        const prompt = await generatePromptSeller(history, nombre, ctx.body);
+        const prompt = await generalInfo(currentState.userName, history, ctx.body);
         console.log(prompt)
         const text = await ai.createChat([
             {

@@ -20,7 +20,7 @@ export default async (_: BotContext, { state, gotoFlow, extensions }: BotMethods
     
     Posibles acciones a realizar:
     1. AGENDAR: Esta acción se debe realizar cuando el cliente expresa su deseo de programar una cita.
-    2. HABLAR: Esta acción se debe realizar solo y solamente esta accion cuando las palabras son de pedir informacion sobre motosmart.
+    2. HABLAR: Esta acción se debe realizar cuando el cliente desea hacer una pregunta o necesita más información o saluda.
     3. CONFIRMAR: Esta acción se debe realizar cuando el cliente y el vendedor llegaron a un acuerdo mutuo proporcionando una fecha, dia y hora exacta sin conflictos de hora. 
     -----------------------------
     Tu objetivo es comprender la intención del cliente y seleccionar la acción más adecuada en respuesta a su declaración.
@@ -34,7 +34,7 @@ export default async (_: BotContext, { state, gotoFlow, extensions }: BotMethods
         }
     ])
 
-    // if (text.includes('HABLAR')) return gotoFlow(flowSeller)
+    if (text.includes('HABLAR')) return gotoFlow(flowSeller)
     if (text.includes('AGENDAR')) return gotoFlow(flowSchedule)
     if (text.includes('CONFIRMAR')) return gotoFlow(flowConfirm)
 }

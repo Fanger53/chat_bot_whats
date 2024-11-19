@@ -11,23 +11,22 @@ import flowInTheMiddle from "./birthday/middle.flow";
 const flowUserWithInfo = addKeyword(EVENTS.ACTION)
     .addAction(async (ctx, { flowDynamic, state, gotoFlow, extensions}) => {
         try {
-            const userInfo = await getUserInfo(ctx.from);
-            console.log('flowUserWithInfo')
-            console.log("Checking user info:", userInfo);
-            
-            if (userInfo && userInfo.nombre && userInfo.puntos_actuales !== undefined) {
-                await state.update({ userName: userInfo.nombre,  points: userInfo.puntos_actuales, is_premium: userInfo.is_premium });
+            console.log('flowUserWithInfo');
+            const currentState = state.getMyState() || {};
+            console.log(currentState)
+            console.log(currentState.userName)
+            if (currentState && currentState.userName !== "") {
                 await flowDynamic([
                     {
                         body: `Gracias por comunicarte con MotoSmart, la única app diseñada para motociclistas como tu 😎🛵`,
                         delay: 2000
                     },
                     {
-                        body: ` Hola ${userInfo.nombre}, Mi nombre es sofia y  voy a ser tu asesora asignada`,
+                        body: ` Hola ${currentState.userName}, Mi nombre es sofia y  voy a ser tu asesora asignada`,
                         delay: 2500
                     },
                     {
-                        body: `${userInfo.nombre}, permíteme felicitarte por tu cumpleaños 🛵🎉🥳 todo el equipo MotoSmart desea que tengas un año lleno de muchos éxitos, bendiciones y mucha salud para que alcances todas tus metas🤜🤛`,
+                        body: `${currentState.userName}, permíteme felicitarte por tu cumpleaños 🛵🎉🥳 todo el equipo MotoSmart desea que tengas un año lleno de muchos éxitos, bendiciones y mucha salud para que alcances todas tus metas🤜🤛`,
                         delay: 2000
                     },
 
@@ -78,6 +77,7 @@ const flowUserWithInfo = addKeyword(EVENTS.ACTION)
             }
         )
         .addAction({ capture:true, idle:2000 }, async (ctx, { flowDynamic, state, extensions, gotoFlow }) => {
+            
             try {
                 const currentState = state.getMyState()
                 const body = ctx.body

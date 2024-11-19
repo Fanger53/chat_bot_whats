@@ -2,7 +2,7 @@ import { addKeyword, EVENTS } from "@bot-whatsapp/bot";
 import { flowSeller } from "src/flows/seller.flow";
 import AIClass from "src/services/ai";
 import flowNegativeAnswerSmartTravel from "./negativeAnswerSmartTravel.flow";
-import flowInfo from "src/flows/info.flows";
+import { handleHistory } from "src/utils/handleHistory";
 
 const flowSmartTravel = addKeyword(EVENTS.ACTION)
     .addAction( async (ctx, { flowDynamic, state }) => {
@@ -148,10 +148,19 @@ const flowSmartTravel = addKeyword(EVENTS.ACTION)
                 ]);
 
                 // Convertir la respuesta a un booleano
+                console.log("linea 152");
+                console.log(response);
                 const isNegative = response.trim() === 'false';
                 const isPositive = response.trim() === 'true';
-                console.log(isNegative)
-                if (isNegative === false) {
+                console.log('linea 153')
+                console.log(isPositive)
+                if (isPositive === true) {
+                    state.update({ 
+                        birthday: false
+                    });
+                    await handleHistory({ content: userMessage, role: 'user' }, state)
+                    gotoFlow(flowSeller)
+                } else {
                     await flowDynamic([
                         {
                             body: '¡Muy bien!',
@@ -162,17 +171,9 @@ const flowSmartTravel = addKeyword(EVENTS.ACTION)
                             delay: 2500 
                         }
                     ]);
-                    // state.update({ 
-                    //     is_positive: isPositive,
-                    //     prompt: userMessage 
-                    // });
-                    gotoFlow(flowInfo)
-                } else{
                     state.update({ 
-                        is_positive: true,
-                        prompt: userMessage 
+                        birthday: false
                     });
-                    gotoFlow(flowInfo)
                 }
             } catch (error) {
                 console.error('Error en el proceso de registro:', error);

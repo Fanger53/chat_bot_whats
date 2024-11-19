@@ -1,5 +1,4 @@
 import { addKeyword, EVENTS } from "@bot-whatsapp/bot";
-import flowInfo from "src/flows/info.flows";
 import AIClass from "src/services/ai";
 import { handleHistory } from "src/utils/handleHistory";
 
@@ -78,12 +77,9 @@ const flowNegativeAnswerSmartTravel = addKeyword(EVENTS.ACTION)
                         delay: 2500 
                     }
                 ]);
-            } else{
                 state.update({ 
-                    is_positive: true,
-                    prompt: userMessage
+                    birthday: false
                 });
-                gotoFlow(flowInfo)
             }
         } catch (error) {
             console.error('Error en el proceso de registro:', error);

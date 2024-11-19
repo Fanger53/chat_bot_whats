@@ -8,7 +8,7 @@ const flowPhoneNumber = addKeyword(EVENTS.ACTION)
     .addAction({capture: true},async (ctx, { state, gotoFlow, flowDynamic }) => {
         try {
             console.log("FlowPhoneNumber")
-            const phone = `57${ctx.from}`
+            const phone = ctx.body
             console.log(phone)
             const userInfo = await getUserInfo(phone);
             console.log("Checking user info:", userInfo);
@@ -18,9 +18,7 @@ const flowPhoneNumber = addKeyword(EVENTS.ACTION)
             }
 
             if (userInfo && userInfo.nombre && userInfo.puntos_actuales !== undefined) {
-                console.log(state)
-                await state.update({ phone: phone, puntos: userInfo.puntos_actuales });
-                const currentState = state.getMyState()
+                await state.update({ userName: userInfo.nombre, phone: phone, puntos: userInfo.puntos_actuales });
                 gotoFlow(flowGivePoints);
             } else {
                 console.log(array.length <= 2)

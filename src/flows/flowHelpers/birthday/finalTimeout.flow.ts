@@ -1,16 +1,14 @@
 import {addAnswer, addKeyword, EVENTS } from "@bot-whatsapp/bot";
-import welcomeFlow from "../../welcome.flow";
 
-const flowFinal = addKeyword(EVENTS.ACTION)
+const flowFinalTimeout = addKeyword(EVENTS.ACTION)
     .addAction(
         async (ctx, { flowDynamic, state, gotoFlow }) => {
             const currentState = state.getMyState()
                 await flowDynamic([{
-                    body:`Muy Bien`, 
-                    delay: 1000
+                    body:`${currentState.userName}, por falta de inactividad en el chat lo debo cerrar, sin embargo puedes comunicarte con nosotros cuando lo desees de nuevo`, delay: 1000
                 },{
                     body: `Gracias por comunicarte con MotoSmart 🤜🤛\nSe un motociclista ejemplar, queremos que siempre regreses a casa 🛵🤟😎`,
-                    delay: 1000
+                    delay: 2000
                 }])
                 state.update({ 
                     birthday:false
@@ -18,4 +16,4 @@ const flowFinal = addKeyword(EVENTS.ACTION)
         }
     )
 
-export default flowFinal;
+export default flowFinalTimeout;

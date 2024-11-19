@@ -8,7 +8,7 @@ const generatePromptToFormatDate = (history: string) => {
     const prompt = `Fecha de Hoy:${getFullCurrentDate()}, Basado en el Historial de conversacion: 
     ${history}
     ----------------
-    Fecha ideal: dd / mm / yyyy hh:mm`
+    Fecha ideal: yyyy / dd / mm /  hh:mm`
 
     return prompt
 }
@@ -35,6 +35,7 @@ const generateJsonParse = (info: string) => {
  * Encargado de pedir los datos necesarios para registrar el evento en el calendario
  */
 const flowConfirm = addKeyword(EVENTS.ACTION).addAction(async (_, { flowDynamic }) => {
+    console.log("flowConfirm")
     await flowDynamic('Ok, voy a pedirte unos datos para agendar')
     await flowDynamic('¿Cual es tu nombre?')
 }).addAction({ capture: true }, async (ctx, { state, flowDynamic, extensions }) => {
