@@ -10,6 +10,7 @@ import { getHistoryParse, handleHistory } from "src/utils/handleHistory";
 import { getCurrentCalendar } from "src/services/calendar";
 import { getFullCurrentDate } from "src/utils/currentDate";
 import flowFinalTimeout from "./finalTimeout.flow";
+import { idleFlow, reset } from "src/utils/idleCustom";
 
 const PROMPT_SCHEDULE = `
 Como ingeniero de inteligencia artificial especializado en la programación de reuniones, tu objetivo es analizar la conversación y determinar la intención del cliente de programar una reunión, así como su preferencia de fecha y hora. La reunión durará aproximadamente 45 minutos y solo puede ser programada entre las 9am y las 4pm, de lunes a viernes, y solo para la semana en curso.
@@ -49,12 +50,13 @@ const generateSchedulePrompt = (summary: string, history: string) => {
 }
 
 const flowInTheMiddle = addKeyword(EVENTS.ACTION)
-.addAction(async (ctx, { flowDynamic, state, gotoFlow }) => {
+.addAction(async (ctx, { flowDynamic, state }) => {
+    reset
     try {
         const currentState = state.getMyState()
         await flowDynamic([
             {
-                body: `Ok, perfecto🤟, ${currentState.userName}, MotoSmart te regala 1.000 MotoPuntos para que los uses en cualquiera de nuestras tiendas aliadas y canjees un obsequio especial. Puedes elegir entre llaveros, balaclavas, gorras y más. 🔥🚀🛵 \n\n¿Que te parece esto que te estoy contando?`,
+                body: `Oye ${currentState.userName}, Por ser tu cumpleaños, MotoSmart quiere obsequiarte 1.000 MotoPuntos para que puedas pasar a cualquiera de las tiendas aliadas a canjear uno de nuestros obsequios, podrás elegir uno entre llaveros, balaclavas gorras, porta documentos entre otros🔥🎉🚀🛵\n\n¿Que te parece esto que te estoy contando?`,
                 delay: 1000
             },
         ]);
@@ -68,6 +70,7 @@ const flowInTheMiddle = addKeyword(EVENTS.ACTION)
 })
 .addAction({ capture: true, idle: 5000}, async (ctx, { flowDynamic, state, gotoFlow, extensions }) => {
         try {
+            reset
             const currentState = state.getMyState()
             const body = ctx.body
             console.log("aqui va un idle flow in the midle")
@@ -118,6 +121,7 @@ const flowInTheMiddle = addKeyword(EVENTS.ACTION)
 )
 .addAction({ capture: true, idle: 60000}, async (ctx, { flowDynamic, state, gotoFlow, extensions }) => {
             try {
+                reset
                 const currentState = state.getMyState();
                 if (ctx?.idleFallBack) {
                     // Crear un timeout que se puede cancelar
@@ -149,7 +153,7 @@ const flowInTheMiddle = addKeyword(EVENTS.ACTION)
         
                     // Si se cumplió el timeout, ir al flujo final
                     if (result === 'timeout') {
-                        return gotoFlow(flowFinalTimeout);
+                        return gotoFlow(idleFlow);
                     }
                 }
                 const userMessage = ctx.body.toLowerCase();
@@ -204,7 +208,7 @@ const flowInTheMiddle = addKeyword(EVENTS.ACTION)
                     ]);
                     console.log("para agendar")
                     state.update({ 
-                        birthday: false
+                        flag: false
                     });
                     return gotoFlow(flowSchedule);
                 }
@@ -254,7 +258,7 @@ const flowInTheMiddle = addKeyword(EVENTS.ACTION)
                     // Si se cumplió el timeout, ir al flujo final
                     if (result === 'timeout') {
                         console.log('linea 255 se acabo el tiempo')
-                        return gotoFlow(flowFinalTimeout);
+                        return gotoFlow(idleFlow);
                     }
                 }
                 const userMessage = ctx.body.toLowerCase();
@@ -322,7 +326,7 @@ const flowInTheMiddle = addKeyword(EVENTS.ACTION)
                 
                     await handleHistory({ content: text, role: 'assistant' }, state)
                     state.update({ 
-                        birthday: false
+                        flag: false
                     });
                     return gotoFlow(flowSchedule);
                 }

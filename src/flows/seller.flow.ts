@@ -52,8 +52,8 @@ export const generatePromptSeller = (history: string, nombre: string, body: stri
 const flowSeller = addKeyword(EVENTS.ACTION).addAction(async (ctx, { state, flowDynamic, extensions, gotoFlow }) => {
     console.log("flowSeller")
     const currentState = state.getMyState() || {};
-    console.log(currentState.birthday)
-    if(currentState.birthday === true){
+    console.log(currentState.flag)
+    if(currentState.flag === true){
         return ""
     }
     try {

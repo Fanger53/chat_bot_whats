@@ -7,7 +7,7 @@ const flowDownloadApp = addKeyword(EVENTS.ACTION)
             console.log('flowDownloadApp')
             flowDynamic(`${currentState.userName}, si no tienes la app descargada en tu telefono puedes descargarla ahora mismo para que puedas comprobar tus MotoPuntos\npuedes descargarla en este enlace:\n http://bit.ly/DescargaMotoSmart`)
             state.update({ 
-                birthday:false
+                flag:false
             });
         } catch (error) {
             console.error('[ERROR in initial API check]:', error);

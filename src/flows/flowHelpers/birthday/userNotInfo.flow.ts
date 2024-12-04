@@ -1,13 +1,15 @@
 import { addKeyword, EVENTS } from "@bot-whatsapp/bot";
 import getUserInfo from "src/services/endpoints/userInformationService";
-import flowGivePoints from "./birthday/GivePoints.flow";
+import flowGivePoints from "./givePoints.flow";
 import AIClass from "src/services/ai";
-import flowPhoneNumber from "./birthday/phoneNumber.flow";
+import flowPhoneNumber from "./phoneNumber.flow";
+import { reset, start } from "src/utils/idleCustom";
 
 const flowUserNotInfo = addKeyword(EVENTS.ACTION)
     .addAction( async (ctx, { flowDynamic, state, extensions }) => {
             console.log('flowUserNotInfo')
             console.log("Capturing phone:", ctx.body);
+            start
             try {
                 const ai = extensions.ai as AIClass;
                 const prompt = `Genera una pregunta casual y amigable para pedirle el nombre a un usuario.
@@ -57,6 +59,7 @@ const flowUserNotInfo = addKeyword(EVENTS.ACTION)
     )
     .addAction({ capture: true, idle:30000 }, async (ctx, { flowDynamic, state, extensions, gotoFlow }) => {
                 try {
+                    reset
                     const userInput = ctx.body;
                     
                     const ai = extensions.ai as AIClass;

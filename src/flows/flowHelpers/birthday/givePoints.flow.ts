@@ -4,10 +4,12 @@ import getUserInfo from "src/services/endpoints/userInformationService";
 import AIClass from "src/services/ai";
 import flowFinal from "./final.flow";
 import flowInTheMiddle from "./middle.flow";
+import { reset } from "src/utils/idleCustom";
 
 const flowGivePoints = addKeyword(EVENTS.ACTION)
     .addAction(async (ctx, { flowDynamic, state, gotoFlow }) => {
         try {
+            reset
             console.log('flowGivePoints')
             const currentState = state.getMyState() || {};
             console.log(currentState)
@@ -67,6 +69,7 @@ const flowGivePoints = addKeyword(EVENTS.ACTION)
             }
         )
         .addAction({ capture: true }, async (ctx, { flowDynamic, state, extensions, gotoFlow }) => {
+            reset
             try {
                 const currentState = state.getMyState()
                 const body = ctx.body

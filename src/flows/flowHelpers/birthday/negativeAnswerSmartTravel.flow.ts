@@ -78,7 +78,7 @@ const flowNegativeAnswerSmartTravel = addKeyword(EVENTS.ACTION)
                     }
                 ]);
                 state.update({ 
-                    birthday: false
+                    flag: false
                 });
             }
         } catch (error) {

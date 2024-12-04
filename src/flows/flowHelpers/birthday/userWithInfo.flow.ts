@@ -2,10 +2,11 @@ import { addKeyword, EVENTS } from "@bot-whatsapp/bot";
 import postPoints from "src/services/endpoints/postPoints";
 import getUserInfo from "src/services/endpoints/userInformationService";
 import AIClass from "src/services/ai";
-import flowFinal from "./birthday/final.flow";
-import flowNoAnswer from "./birthday/noAnswer.flow";
-import flowSmartTravel from "./birthday/smartTravel.flow";
-import flowInTheMiddle from "./birthday/middle.flow";
+import flowFinal from "./final.flow";
+import flowNoAnswer from "./noAnswer.flow";
+import flowSmartTravel from "./smartTravel.flow";
+import flowInTheMiddle from "./middle.flow";
+import { start, reset } from "src/utils/idleCustom";
 
 
 const flowUserWithInfo = addKeyword(EVENTS.ACTION)
@@ -41,9 +42,10 @@ const flowUserWithInfo = addKeyword(EVENTS.ACTION)
             return true;
         }
     })
-    .addAction( async (ctx, { flowDynamic, state, extensions}) => {
+    .addAction( async (ctx, { flowDynamic, state, extensions, gotoFlow}) => {
+                start
                 try { 
-
+                    const currentState = state.getMyState()
                     const ai = extensions.ai as AIClass;
                     const prompt = `Genera una única pregunta corta y amigable sobre cómo está pasando su cumpleaños. 
                         Reglas:
@@ -60,11 +62,14 @@ const flowUserWithInfo = addKeyword(EVENTS.ACTION)
 
                         Responde con una sola pregunta siguiendo este estilo.`;
                     const response = await ai.createChat([
-                    { role: 'user', content: prompt }
+                        { role: 'user', content: prompt }
                     ]);
 
                     // Generar una respuesta personalizada utilizando el nombre
                     await flowDynamic([{body: `${response}`, delay: 2000}]);
+                    // let b = await before(ctx, currentState.userName, 10000)
+                    // flowDynamic(`${b}`)
+                    start(ctx, gotoFlow, 60000)
                 } catch (error) {
                     console.error('Error en el proceso de registro:', error);
                     await flowDynamic([
@@ -76,15 +81,10 @@ const flowUserWithInfo = addKeyword(EVENTS.ACTION)
                 }
             }
         )
-        .addAction({ capture:true, idle:2000 }, async (ctx, { flowDynamic, state, extensions, gotoFlow }) => {
-            
+        .addAction({ capture:true}, async (ctx, { flowDynamic, state, extensions, gotoFlow }) => {
+            reset          
             try {
-                const currentState = state.getMyState()
                 const body = ctx.body
-                if (ctx?.idleFallBack) {
-                    console.log("paso el idle")
-                    return gotoFlow(flowNoAnswer)
-                }
                 
                 const ai = extensions.ai as AIClass;
                 const prompt = `toma esto ${body} como contexto y el usuario está de cumpleaños. Ya lo hemos felicitado y saludado antes. 
@@ -98,7 +98,7 @@ const flowUserWithInfo = addKeyword(EVENTS.ACTION)
                 const response = await ai.createChat([
                 { role: 'user', content: prompt }
                 ]);
-
+                
                 // Generar una respuesta personalizada utilizando el nombre
                 await flowDynamic([{body: `${response}`, delay: 5000}]);
                 return gotoFlow(flowInTheMiddle);

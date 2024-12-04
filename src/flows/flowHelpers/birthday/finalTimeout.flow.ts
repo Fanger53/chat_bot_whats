@@ -11,7 +11,7 @@ const flowFinalTimeout = addKeyword(EVENTS.ACTION)
                     delay: 2000
                 }])
                 state.update({ 
-                    birthday:false
+                    flag:false
                 });
         }
     )

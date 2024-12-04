@@ -13,7 +13,7 @@ const flowFinal = addKeyword(EVENTS.ACTION)
                     delay: 1000
                 }])
                 state.update({ 
-                    birthday:false
+                    flag:false
                 });
         }
     )

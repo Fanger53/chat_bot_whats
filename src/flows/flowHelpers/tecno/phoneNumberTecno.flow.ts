@@ -1,15 +1,14 @@
 import { addKeyword, EVENTS } from "@bot-whatsapp/bot";
 import getUserInfo from "src/services/endpoints/userInformationService";
-import flowGivePoints from "./givePoints.flow";
-import flowDownloadApp from "./downloadApp.flow";
-import { reset } from "src/utils/idleCustom";
+import flowDownloadApp from "../birthday/downloadApp.flow";
+import flowGivePoints from "../birthday/givePoints.flow";
+
 
 const array = []
-const flowPhoneNumber = addKeyword(EVENTS.ACTION)
+const flowPhoneNumberTecno = addKeyword(EVENTS.ACTION)
     .addAction({capture: true},async (ctx, { state, gotoFlow, flowDynamic }) => {
         try {
-            reset
-            console.log("FlowPhoneNumber")
+            console.log("flowPhoneNumberTecno")
             const phone = ctx.body
             console.log(phone)
             const userInfo = await getUserInfo(phone);
@@ -40,11 +39,11 @@ const flowPhoneNumber = addKeyword(EVENTS.ACTION)
                     console.log("Redirigiendo a la descarga de la app porque no se encontró el registro.");
                     return gotoFlow(flowDownloadApp)
                 } 
-                gotoFlow(flowPhoneNumber)
+                gotoFlow(flowPhoneNumberTecno)
             }
         } catch (error) {
             console.error('[ERROR in initial API check]:', error);
         }
     })
 
-    export default flowPhoneNumber;
+    export default flowPhoneNumberTecno;
