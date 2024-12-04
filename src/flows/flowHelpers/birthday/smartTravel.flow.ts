@@ -156,7 +156,7 @@ const flowSmartTravel = addKeyword(EVENTS.ACTION)
                 console.log(isPositive)
                 if (isPositive === true) {
                     state.update({ 
-                        birthday: false
+                        flag: false
                     });
                     await handleHistory({ content: userMessage, role: 'user' }, state)
                     gotoFlow(flowSeller)
@@ -172,7 +172,7 @@ const flowSmartTravel = addKeyword(EVENTS.ACTION)
                         }
                     ]);
                     state.update({ 
-                        birthday: false
+                        flag: false
                     });
                 }
             } catch (error) {
