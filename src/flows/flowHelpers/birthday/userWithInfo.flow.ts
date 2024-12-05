@@ -43,7 +43,7 @@ const flowUserWithInfo = addKeyword(EVENTS.ACTION)
         }
     })
     .addAction( async (ctx, { flowDynamic, state, extensions, gotoFlow}) => {
-                start
+                start(ctx, gotoFlow, 90000)
                 try { 
                     const currentState = state.getMyState()
                     const ai = extensions.ai as AIClass;
@@ -69,7 +69,6 @@ const flowUserWithInfo = addKeyword(EVENTS.ACTION)
                     await flowDynamic([{body: `${response}`, delay: 2000}]);
                     // let b = await before(ctx, currentState.userName, 10000)
                     // flowDynamic(`${b}`)
-                    start(ctx, gotoFlow, 60000)
                 } catch (error) {
                     console.error('Error en el proceso de registro:', error);
                     await flowDynamic([
@@ -82,7 +81,7 @@ const flowUserWithInfo = addKeyword(EVENTS.ACTION)
             }
         )
         .addAction({ capture:true}, async (ctx, { flowDynamic, state, extensions, gotoFlow }) => {
-            reset          
+            reset(ctx, gotoFlow, 90000)          
             try {
                 const body = ctx.body
                 

@@ -8,7 +8,7 @@ const array = []
 const flowPhoneNumber = addKeyword(EVENTS.ACTION)
     .addAction({capture: true},async (ctx, { state, gotoFlow, flowDynamic }) => {
         try {
-            reset
+            reset(ctx, gotoFlow, 90000)
             console.log("FlowPhoneNumber")
             const phone = ctx.body
             console.log(phone)

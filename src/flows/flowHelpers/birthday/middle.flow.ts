@@ -50,8 +50,8 @@ const generateSchedulePrompt = (summary: string, history: string) => {
 }
 
 const flowInTheMiddle = addKeyword(EVENTS.ACTION)
-.addAction(async (ctx, { flowDynamic, state }) => {
-    reset
+.addAction(async (ctx, { flowDynamic, state, gotoFlow }) => {
+    reset(ctx, gotoFlow, 90000)
     try {
         const currentState = state.getMyState()
         await flowDynamic([
@@ -70,7 +70,7 @@ const flowInTheMiddle = addKeyword(EVENTS.ACTION)
 })
 .addAction({ capture: true, idle: 5000}, async (ctx, { flowDynamic, state, gotoFlow, extensions }) => {
         try {
-            reset
+            reset(ctx, gotoFlow, 90000)
             const currentState = state.getMyState()
             const body = ctx.body
             console.log("aqui va un idle flow in the midle")
@@ -121,7 +121,7 @@ const flowInTheMiddle = addKeyword(EVENTS.ACTION)
 )
 .addAction({ capture: true, idle: 60000}, async (ctx, { flowDynamic, state, gotoFlow, extensions }) => {
             try {
-                reset
+                reset(ctx, gotoFlow, 90000)
                 const currentState = state.getMyState();
                 if (ctx?.idleFallBack) {
                     // Crear un timeout que se puede cancelar
