@@ -3,6 +3,7 @@ import AIClass from "src/services/ai";
 import { handleHistory } from "src/utils/handleHistory";
 import flowFinancing from "./financing.flow";
 import { flowScheduleTechno } from "./scheduleTechno.flow";
+import { reset, start } from "src/utils/idleCustom";
 // import flowFinal from "./final.flow";
 // import flowSmartTravel from "./smartTravel.flow";
 // import flowInTheMiddle from "./middle.flow";
@@ -11,6 +12,7 @@ import { flowScheduleTechno } from "./scheduleTechno.flow";
 const flowUserWithInfoTecno = addKeyword(EVENTS.ACTION)
     .addAction(async (ctx, { flowDynamic, state, gotoFlow, extensions}) => {
         try {
+            start(ctx, gotoFlow, 90000)
             console.log('flowUserWithInfoTecno');
             const currentState = state.getMyState() || {};
             console.log(currentState)
@@ -26,7 +28,7 @@ const flowUserWithInfoTecno = addKeyword(EVENTS.ACTION)
                         delay: 2500
                     },
                     {
-                        body: " Por sacar tu TECNO tienes tres beneficios con MotoSmart:",
+                        body: " ¿De que ciudad me estas hablando? ",
                         delay: 1000
                     }
 
@@ -40,63 +42,24 @@ const flowUserWithInfoTecno = addKeyword(EVENTS.ACTION)
             return true;
         }
     })
-    .addAction( async (ctx, { flowDynamic, state, extensions}) => {
-            try {
-                const currentState = state.getMyState() || {};
-                console.log(currentState);
-                console.log("");
-                if (currentState && currentState.userName !== "") {
-                    await flowDynamic([
-                        {
-                            body: `Cargaremos 5️⃣0️⃣0️⃣0️⃣ MotoPuntos a tu perfil para que los cambies por obsequios en cualquiera de nuestras marcas aliadas 🎁`,
-                            delay: 2000
-                        },
-                        {
-                            body: `Podemos **financiartela** con tu cédula para que la pagues a meses y sin cuota inicial 🤑`,
-                            delay: 2500
-                        },
-                        {
-                            body: `Puedes agendar una cita en nuestro CDA aliado, de esta manera no tendrás que hacer filas y menos demora tendrás 🤟`,
-                            delay: 2000
-                        }
-                    ]);
-                    if (currentState.is_premium){
-                        flowDynamic('Ademas por ser un usuario premium te regalamos $22.000?')
-                    }
-                    flowDynamic('¿De que ciudad me estas hablando?')
-                } else {
-                    return false;
-                }
-                } catch (error) {
-                    console.error('Error en el proceso de registro:', error);
-                    await flowDynamic([
-                    {
-                        body: 'Lo siento, ha ocurrido un error. Por favor, intenta nuevamente.',
-                        delay: 1000
-                    }
-                ]);
-            }
-        }
-    )
-    .addAction( { capture: true}, async (ctx, { flowDynamic, state, extensions}) => {
-                try { 
+    .addAction( { capture: true}, async (ctx, { flowDynamic, state, extensions, gotoFlow}) => {
+                try {
+                    reset(ctx, gotoFlow, 90000)
                     const currentState = state.getMyState();
                     const userMessage = ctx.body
                     console.log(userMessage)
                     const ai = extensions.ai as AIClass;
-                    const prompt = `Analiza la respuesta: "${userMessage}" considerando que responde a la pregunta: "¿De qué ciudad me estás hablando?"
+                    const prompt = `Analiza la respuesta: ${userMessage} considerando que responde a la pregunta: '¿De qué ciudad o pueblo de Colombia me está hablando?' y que se refiere a ciudades o pueblos colombianos.
 
-                    Si la respuesta menciona una de las ciudades donde tenemos sucursales CDA ("Bogotá", "Medellín", "Cali"), responde directamente indicando que tenemos una sucursal allí.
-
-                    Ejemplo: "¡Perfecto! Tenemos una sucursal CDA en Bogotá."
-                    Si la respuesta menciona una ciudad o pueblo no incluido en nuestra lista, identifica la región o departamento y relaciónalo con la sucursal más cercana.
-
-                    Ejemplo:
-                    Para "Manizales", responde: "Manizales está en Caldas. Nuestra sucursal más cercana está en Cali."
-                    Para "Envigado", responde: "Envigado está cerca de Medellín. Puedes visitar nuestra sucursal en Medellín."
+Si la respuesta menciona directamente una de las ciudades donde tenemos sucursales CDA (Bogotá, Medellín, Cali), responde indicando que tenemos una sucursal en esa ciudad.
+Si la respuesta menciona otra ciudad o pueblo diferente:
+Calcula cuál es la sucursal más cercana entre Bogotá, Medellín y Cali.
+Proporciona la distancia aproximada (en kilómetros) desde esa ciudad/pueblo a nuestra sucursal más cercana.
+Responde de manera clara, mencionando que aunque no tenemos una sucursal en esa ciudad, indicamos la más cercana y la distancia.
+Responde en un tono amable, breve y profesional.
                     Si no puedes interpretar la ubicación, responde con una lista clara de las sucursales disponibles:
 
-                    Ejemplo: "No estoy segura de la ciudad que mencionas, pero nuestras sucursales están en Bogotá, Medellín y Cali."`;
+                    Ejemplo: "No estoy segura de la ciudad que mencionas, pero nuestras sucursales están en Bogotá, Medellín y Cali.", siempre ten encuenta la ciudad que se menciona aqui: "${userMessage}"`;
 
                     const response = await ai.createChat([
                         {
@@ -109,7 +72,7 @@ const flowUserWithInfoTecno = addKeyword(EVENTS.ACTION)
                             delay: 2000
                         },
                         {
-                            body: "Te gustaria saber mas sobre la financiacion o quieres agendar una cita con nuestro aliado?",
+                            body: "Por sacar tu TECNO tienes beneficios con MotoSmart como:",
                             delay: 2000
                         }
                     ])
@@ -125,8 +88,43 @@ const flowUserWithInfoTecno = addKeyword(EVENTS.ACTION)
                 }
             }
     )
+    .addAction( async (ctx, { flowDynamic, state, extensions, gotoFlow}) => {
+            try {
+                reset(ctx, gotoFlow, 90000)
+                const currentState = state.getMyState() || {};
+                console.log(currentState);
+                console.log("");
+                if (currentState && currentState.userName !== "") {
+                    await flowDynamic([
+                        {
+                            body: `Cargaremos 5️⃣0️⃣0️⃣0️⃣ MotoPuntos a tu perfil para que los cambies por obsequios en cualquiera de nuestras marcas aliadas 🎁`,
+                            delay: 2000
+                        },
+                        {
+                            body: `Puedes agendar una cita en nuestro CDA aliado, de esta manera no tendrás que hacer filas y menos demora tendrás 🤟`,
+                            delay: 2000
+                        }
+                    ]);
+                    if (currentState.is_premium){
+                        flowDynamic('Ademas por ser un usuario premium te regalamos $22.000?')
+                    }
+                    flowDynamic('')
+                } else {
+                    return false;
+                }
+                } catch (error) {
+                    console.error('Error en el proceso de registro:', error);
+                    await flowDynamic([
+                    {
+                        body: 'Lo siento, ha ocurrido un error. Por favor, intenta nuevamente.',
+                        delay: 1000
+                    }
+                ]);
+            }
+        }
+    )
     .addAction( { capture:true }, async (ctx, { flowDynamic, state, extensions, gotoFlow}) => {
-                console.log("123")
+                reset(ctx, gotoFlow, 90000)
                 try { 
                     const currentState = state.getMyState();
                     const userMessage = ctx.body.toLowerCase();
@@ -148,7 +146,7 @@ const flowUserWithInfoTecno = addKeyword(EVENTS.ACTION)
                     console.log(response);
                     console.log(response === "1")
                     if (response === "1") {
-                        gotoFlow(flowFinancing)
+                        console.log("financing")
                     } else if (response === "2") {
                         state.update({
                             scheduleTechno: true
