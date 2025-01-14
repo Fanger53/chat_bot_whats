@@ -9,7 +9,7 @@ const timers = {};
 const idleFlow = addKeyword(EVENTS.ACTION).addAction(
     async (_, { endFlow, state, flowDynamic }) => {
         const currentState = state.getMyState();
-        await flowDynamic(`${currentState.userName}, por falta de inactividad en el chat lo debo cerrar, sin embargo puedes comunicarte con nosotros cuando lo desees de nuevo`)
+        await flowDynamic(`Por falta de inactividad en el chat lo debo cerrar, sin embargo puedes comunicarte con nosotros cuando lo desees de nuevo`)
         state.update({ 
             flag:false
         });

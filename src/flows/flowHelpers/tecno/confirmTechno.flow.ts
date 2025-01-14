@@ -22,7 +22,7 @@ const generateJsonParse = (info: string) => {
         "name": "Leifer",
         "interest": "n/a",
         "value": "0",
-        "email": "fef@fef.com",
+        "plate": "ABC123",
         "startDate": "2024/02/15 00:00:00"
     }
     
@@ -54,10 +54,10 @@ const flowConfirmTechno = addKeyword(EVENTS.ACTION).addAction(async (_, { flowDy
     await state.update({ startDate: text })
 })
     .addAction({ capture: true }, async (ctx, { state, flowDynamic }) => {
-        await flowDynamic(`Ultima pregunta ¿Cual es tu email?`)
+        await flowDynamic(`Ultima pregunta ¿Cual es la placa de tu moto?`)
     })
     .addAction({ capture: true }, async (ctx, { state, extensions, flowDynamic }) => {
-        const infoCustomer = `Name: ${state.get('name')}, StarteDate: ${state.get('startDate')}, email: ${ctx.body}`
+        const infoCustomer = `Name: ${state.get('name')}, StarteDate: ${state.get('startDate')}, plate: ${ctx.body}`
         const ai = extensions.ai as AIClass
 
         const text = await ai.createChat([
@@ -68,8 +68,8 @@ const flowConfirmTechno = addKeyword(EVENTS.ACTION).addAction(async (_, { flowDy
         ])
 
         await appToCalendarTechno(text)
+        await flowDynamic(`muy bien ${state.get('name')}, tu cita a sido agendada para ${state.get('startDate')}`)
         clearHistory(state)
-        await flowDynamic("Gracias por comunicarte con MotoSmart 🤜🤛\nSe un motociclista ejemplar, queremos que siempre regreses a casa🛵🤟😎")
         state.update({
             scheduleTechno: false
         });

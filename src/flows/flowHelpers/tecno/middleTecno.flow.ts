@@ -58,7 +58,7 @@ const flowMiddleTechno = addKeyword(EVENTS.ACTION)
                         }
                     ]);
                     if (currentState.is_premium){
-                        flowDynamic('Ademas por ser un usuario premium te regalamos $22.000?')
+                        flowDynamic('Ademas por ser un usuario premium te regalamos $25.000?')
                     }
                     flowDynamic('¿De que ciudad me estas hablando?')
                 } else {

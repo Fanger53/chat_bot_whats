@@ -1,7 +1,7 @@
 import { addKeyword, EVENTS } from "@bot-whatsapp/bot";
 import getUserInfo from "src/services/endpoints/userInformationService";
 import flowDownloadApp from "../birthday/downloadApp.flow";
-import flowGivePoints from "../birthday/givePoints.flow";
+import flowMiddleTechno from "./middleTecno.flow";
 
 
 const array = []
@@ -20,7 +20,7 @@ const flowPhoneNumberTecno = addKeyword(EVENTS.ACTION)
 
             if (userInfo && userInfo.nombre && userInfo.puntos_actuales !== undefined) {
                 await state.update({ userName: userInfo.nombre, phone: phone, puntos: userInfo.puntos_actuales });
-                gotoFlow(flowGivePoints);
+                gotoFlow(flowMiddleTechno);
             } else {
                 console.log(array.length <= 2)
                 console.log(array.length > 2 && array.length <= 3)
