@@ -5,6 +5,7 @@ import AIClass from "../services/ai";
 import { getFullCurrentDate } from "src/utils/currentDate";
 import getUserInfo from "../services/endpoints/userInformationService"
 import generalInfo from "src/utils/general_info";
+import { reset, resetPrevious } from "src/utils/idleCustom";
 
 
 const PROMPT_SELLER = `Eres una asistente de motosmart actua asi FECHA DE HOY: {CURRENT_DAY}
@@ -18,7 +19,7 @@ Hola, bienvenido a MotoSmart 🛵 ¿En qué puedo ayudarte el día de hoy?
 💳 Póliza de vida adicional
 💰 Descuentos exclusivos en productos y servicios
 👥 Comunidad de motociclistas para compartir experiencias
-La membresía premium tiene un costo de $300.000. ¿Te interesa adquirirla o tienes alguna otra consulta?
+La membresía premium tiene un costo de $397.000. ¿Te interesa adquirirla o tienes alguna otra consulta?
 Recuerda que puedes agendar tus citas con 5 minutos de anticipación para asegurar tu turno. ¿Hay algo más en lo que pueda ayudarte?
 DIRECTRICES DE INTERACCIÓN:
 1. Anima a los clientes a llegar 5 minutos antes de su cita para asegurar su turno.
@@ -50,8 +51,9 @@ export const generatePromptSeller = (history: string, nombre: string, body: stri
  * Hablamos con el PROMPT que sabe sobre las cosas basicas del negocio, info, precio, etc.
  */
 const flowSeller = addKeyword(EVENTS.ACTION).addAction(async (ctx, { state, flowDynamic, extensions, gotoFlow }) => {
-    console.log("flowSeller")
     const currentState = state.getMyState() || {};
+    reset(ctx, gotoFlow, 360000)
+    resetPrevious(ctx, 180000, flowDynamic, currentState.userName)
     console.log(currentState.flag)
     if(currentState.flag === true){
         return ""
@@ -60,7 +62,6 @@ const flowSeller = addKeyword(EVENTS.ACTION).addAction(async (ctx, { state, flow
         const ai = extensions.ai as AIClass
         const history = getHistoryParse(state)
         const prompt = await generalInfo(currentState.userName, history, ctx.body);
-        console.log(prompt)
         const text = await ai.createChat([
             {
                 role: 'system',

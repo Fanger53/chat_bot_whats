@@ -1,5 +1,6 @@
 import {addAnswer, addKeyword, EVENTS } from "@bot-whatsapp/bot";
 import welcomeFlow from "../../welcome.flow";
+import { stopPrevious } from "src/utils/idleCustom";
 
 const flowFinal = addKeyword(EVENTS.ACTION)
     .addAction(
@@ -15,6 +16,7 @@ const flowFinal = addKeyword(EVENTS.ACTION)
                 state.update({ 
                     flag:false
                 });
+                stopPrevious(ctx);
         }
     )
 

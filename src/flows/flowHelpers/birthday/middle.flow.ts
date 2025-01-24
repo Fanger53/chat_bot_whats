@@ -1,7 +1,6 @@
 import { addKeyword, EVENTS } from "@bot-whatsapp/bot";
 import { flowSeller } from "src/flows/seller.flow";
 import AIClass from "src/services/ai";
-import flowNoAnswer from "./noAnswer.flow";
 import flowFinal from "./final.flow";
 import flowSmartTravel from "./smartTravel.flow";
 import postPoints from "src/services/endpoints/postPoints";
@@ -9,8 +8,8 @@ import { flowSchedule } from "src/flows/schedule.flow";
 import { getHistoryParse, handleHistory } from "src/utils/handleHistory";
 import { getCurrentCalendar } from "src/services/calendar";
 import { getFullCurrentDate } from "src/utils/currentDate";
-import flowFinalTimeout from "./finalTimeout.flow";
-import { idleFlow, reset } from "src/utils/idleCustom";
+import { reset, resetPrevious } from "src/utils/idleCustom";
+import { flowScheduleBirthday } from "./scheduleBirthday.flow";
 
 const PROMPT_SCHEDULE = `
 Como ingeniero de inteligencia artificial especializado en la programación de reuniones, tu objetivo es analizar la conversación y determinar la intención del cliente de programar una reunión, así como su preferencia de fecha y hora. La reunión durará aproximadamente 45 minutos y solo puede ser programada entre las 9am y las 4pm, de lunes a viernes, y solo para la semana en curso.
@@ -51,7 +50,9 @@ const generateSchedulePrompt = (summary: string, history: string) => {
 
 const flowInTheMiddle = addKeyword(EVENTS.ACTION)
 .addAction(async (ctx, { flowDynamic, state, gotoFlow }) => {
-    reset(ctx, gotoFlow, 90000)
+    const currentState = state.getMyState() || {};
+    reset(ctx, gotoFlow, 360000)
+    resetPrevious(ctx, 180000, flowDynamic, currentState.userName)
     try {
         const currentState = state.getMyState()
         await flowDynamic([
@@ -68,17 +69,12 @@ const flowInTheMiddle = addKeyword(EVENTS.ACTION)
         return false;
     }
 })
-.addAction({ capture: true, idle: 5000}, async (ctx, { flowDynamic, state, gotoFlow, extensions }) => {
+.addAction({ capture: true }, async (ctx, { flowDynamic, state, gotoFlow, extensions }) => {
         try {
-            reset(ctx, gotoFlow, 90000)
-            const currentState = state.getMyState()
+            const currentState = state.getMyState() || {};
+            reset(ctx, gotoFlow, 360000)
+            resetPrevious(ctx, 180000, flowDynamic, currentState.userName)
             const body = ctx.body
-            console.log("aqui va un idle flow in the midle")
-            console.log(ctx.idleFallBack)
-            if (ctx?.idleFallBack) {
-                console.log("paso el idle")
-                return gotoFlow(flowNoAnswer)
-            }
             const ai = extensions.ai as AIClass;
             const prompt = `Actúa como un agente amigable y responde al contexto: "${body}".
                 Reglas:
@@ -119,49 +115,19 @@ const flowInTheMiddle = addKeyword(EVENTS.ACTION)
         }
     }
 )
-.addAction({ capture: true, idle: 60000}, async (ctx, { flowDynamic, state, gotoFlow, extensions }) => {
+.addAction({ capture: true }, async (ctx, { flowDynamic, state, gotoFlow, extensions }) => {
             try {
-                reset(ctx, gotoFlow, 90000)
-                const currentState = state.getMyState();
-                if (ctx?.idleFallBack) {
-                    // Crear un timeout que se puede cancelar
-                    const timeoutPromise = new Promise((resolve) => {
-                        const timeoutId = setTimeout(() => {
-                            resolve('timeout');
-                        }, 60000);
-        
-                        // Guardar el ID del timeout en el estado para poder cancelarlo si es necesario
-                        state.update({ idleTimeoutId: timeoutId });
-                    });
-        
-                    await flowDynamic(`${currentState.userName}, ¿lograste revisar los motopuntos que te aparcen en la app?`);
-        
-                    // Esperar la respuesta o el timeout
-                    const result = await Promise.race([
-                        timeoutPromise,
-                        new Promise((resolve) => {
-                            // Esta promesa se resolvería si el usuario responde antes del timeout
-                            state.update({ idleResolve: resolve });
-                        })
-                    ]);
-        
-                    // Limpiar el estado
-                    await state.update({ 
-                        idleTimeoutId: null, 
-                        idleResolve: null 
-                    });
-        
-                    // Si se cumplió el timeout, ir al flujo final
-                    if (result === 'timeout') {
-                        return gotoFlow(idleFlow);
-                    }
-                }
+                const currentState = state.getMyState() || {};
+                reset(ctx, gotoFlow, 360000)
+                resetPrevious(ctx, 180000, flowDynamic, currentState.userName)
+                
                 const userMessage = ctx.body.toLowerCase();
                 const ai = extensions.ai as AIClass;
                 console.log('flow in the midle 116')
                 const prompt = `Analiza la siguiente respuesta del usuario: "${userMessage}"
                     Instrucciones estrictas:
-                    - Si la respuesta contiene CUALQUIERA de estas palabras clave, devuelve OBLIGATORIAMENTE true:
+                    - Si "${userMessage}" contiene CUALQUIERA de estas palabras clave, devuelve OBLIGATORIAMENTE true:
+                    * si
                     * sí
                     * claro
                     * ok
@@ -173,9 +139,10 @@ const flowInTheMiddle = addKeyword(EVENTS.ACTION)
                     * de acuerdo
                     * está bien
                     * correcto
-
+                    * ahi estan
+                    * estan ahi
                     - Analiza el sentido general de la respuesta
-                    - Si la respuesta es afirmativa o muestra disposición positiva, devuelve true
+                    - Si la "${userMessage}" es afirmativa o muestra disposición positiva o que se refiere que los puntos estan ahi, devuelve true
                     - Si la respuesta es negativa o muestra dudas, devuelve false
 
                     Criterios de positividad:
@@ -194,9 +161,9 @@ const flowInTheMiddle = addKeyword(EVENTS.ACTION)
 
                 // Convertir la respuesta a un booleano
                 const isPositive = response.trim() === 'true';
-                console.log(isPositive)
+                console.log("es positivo linea 167:", isPositive)
                 if (isPositive) {
-                    await postPoints(ctx.from, "true");
+                    await postPoints(currentState.phone, "true");
                     await state.update({ registered: true });
                     await flowDynamic(' ¡Excelente! en este momento hemos cargado 1.000 MotoPuntos en tu cuenta, por favor actualiza la aplicacion y comprueba si se sumaron los puntos en tu saldo');
                 } else {
@@ -208,9 +175,10 @@ const flowInTheMiddle = addKeyword(EVENTS.ACTION)
                     ]);
                     console.log("para agendar")
                     state.update({ 
-                        flag: false
+                        flag: false,
+                        scheduleBirthday: true
                     });
-                    return gotoFlow(flowSchedule);
+                    return gotoFlow(flowScheduleBirthday);
                 }
 
             } catch (error) {
@@ -224,43 +192,11 @@ const flowInTheMiddle = addKeyword(EVENTS.ACTION)
             }
         }
     )
-    .addAction({ capture: true, idle: 60000}, async (ctx, { flowDynamic, state, gotoFlow, extensions }) => {
+    .addAction({ capture: true}, async (ctx, { flowDynamic, state, gotoFlow, extensions }) => {
             try {
-                const currentState = state.getMyState();
-                if (ctx?.idleFallBack) {
-                    // Crear un timeout que se puede cancelar
-                    const timeoutPromise = new Promise((resolve) => {
-                        const timeoutId = setTimeout(() => {
-                            resolve('timeout');
-                        }, 60000);
-        
-                        // Guardar el ID del timeout en el estado para poder cancelarlo si es necesario
-                        state.update({ idleTimeoutId: timeoutId });
-                    });
-        
-                    await flowDynamic(`${currentState.userName}, ¿lograste revisar los motopuntos que te aparcen en la app?`);
-        
-                    // Esperar la respuesta o el timeout
-                    const result = await Promise.race([
-                        timeoutPromise,
-                        new Promise((resolve) => {
-                            // Esta promesa se resolvería si el usuario responde antes del timeout
-                            state.update({ idleResolve: resolve });
-                        })
-                    ]);
-        
-                    // Limpiar el estado
-                    await state.update({ 
-                        idleTimeoutId: null, 
-                        idleResolve: null 
-                    });
-        
-                    // Si se cumplió el timeout, ir al flujo final
-                    if (result === 'timeout') {
-                        console.log('linea 255 se acabo el tiempo')
-                        return gotoFlow(idleFlow);
-                    }
-                }
+                const currentState = state.getMyState() || {};
+                reset(ctx, gotoFlow, 360000)
+                resetPrevious(ctx, 180000, flowDynamic, currentState.userName)
                 const userMessage = ctx.body.toLowerCase();
                 const ai = extensions.ai as AIClass;
                 console.log('flow in the midle 116')
@@ -326,9 +262,10 @@ const flowInTheMiddle = addKeyword(EVENTS.ACTION)
                 
                     await handleHistory({ content: text, role: 'assistant' }, state)
                     state.update({ 
-                        flag: false
+                        flag: false,
+                        scheduleBirthday: true
                     });
-                    return gotoFlow(flowSchedule);
+                    return gotoFlow(flowScheduleBirthday);
                 }
 
             } catch (error) {

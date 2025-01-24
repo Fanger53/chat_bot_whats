@@ -1,11 +1,14 @@
 import { addKeyword, EVENTS } from "@bot-whatsapp/bot";
 import AIClass from "src/services/ai";
 import { handleHistory } from "src/utils/handleHistory";
+import { reset, resetPrevious, stopPrevious } from "src/utils/idleCustom";
 
 const flowNegativeAnswerSmartTravel = addKeyword(EVENTS.ACTION)
-    .addAction(async (ctx, { flowDynamic, state }) => {
+    .addAction(async (ctx, { flowDynamic, state, gotoFlow }) => {
         try {
-            const currentState = state.getMyState()
+            const currentState = state.getMyState() || {};
+            reset(ctx, gotoFlow, 360000)
+            resetPrevious(ctx, 180000, flowDynamic, currentState.userName)
             console.log('flowNegativeAnswerSmartTravel')
             await flowDynamic([
                 {
@@ -26,7 +29,9 @@ const flowNegativeAnswerSmartTravel = addKeyword(EVENTS.ACTION)
     })
     .addAction({ capture: true}, async (ctx, { flowDynamic, state, gotoFlow, extensions }) => {
         try {
-            const currentState = state.getMyState();
+            const currentState = state.getMyState() || {};
+            reset(ctx, gotoFlow, 360000)
+            resetPrevious(ctx, 180000, flowDynamic, currentState.userName)
             const userMessage = ctx.body.toLowerCase();
             const ai = extensions.ai as AIClass;
             const prompt = `Analiza la siguiente respuesta del usuario: "${userMessage} bajo el contexto de que la respuesta es de esta pregunta ¿te puedo ayudar con algo mas?"
@@ -80,6 +85,7 @@ const flowNegativeAnswerSmartTravel = addKeyword(EVENTS.ACTION)
                 state.update({ 
                     flag: false
                 });
+                stopPrevious(ctx);
             }
         } catch (error) {
             console.error('Error en el proceso de registro:', error);

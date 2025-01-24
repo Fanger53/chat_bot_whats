@@ -4,6 +4,7 @@ import { getHistoryParse, handleHistory } from "../utils/handleHistory";
 import { generateTimer } from "../utils/generateTimer";
 import { getCurrentCalendar } from "../services/calendar";
 import { getFullCurrentDate } from "src/utils/currentDate";
+import { reset, resetPrevious } from "src/utils/idleCustom";
 
 const generateSchedulePrompt = (schedule: string, history: string) => {
     const currentDay = getFullCurrentDate()
@@ -40,9 +41,11 @@ const generateSchedulePrompt = (schedule: string, history: string) => {
 /**
  * Hable sobre todo lo referente a agendar citas, revisar historial saber si existe huecos disponibles
  */
-const flowSchedule = addKeyword(EVENTS.ACTION).addAction(async (ctx, { extensions, state, flowDynamic }) => {
+const flowSchedule = addKeyword(EVENTS.ACTION).addAction(async (ctx, { extensions, state, flowDynamic, gotoFlow }) => {
     console.log("flow agendar")
-    const currentState = state.getMyState()
+    const currentState = state.getMyState() || {};
+    reset(ctx, gotoFlow, 360000)
+    resetPrevious(ctx, 180000, flowDynamic, currentState.userName)
     if(currentState.birthday === true){
         return ""
     }

@@ -4,6 +4,7 @@ import { getHistoryParse, handleHistory } from "../../../utils/handleHistory";
 import { generateTimer } from "../../../utils/generateTimer";
 import { getCurrentCalendar } from "../../../services/calendar";
 import { getFullCurrentDate } from "src/utils/currentDate";
+import { reset, resetPrevious } from "src/utils/idleCustom";
 
 const generateSchedulePrompt = (schedule: string, history: string) => {
     const currentDay = getFullCurrentDate()
@@ -40,9 +41,12 @@ const generateSchedulePrompt = (schedule: string, history: string) => {
 /**
  * Hable sobre todo lo referente a agendar citas, revisar historial saber si existe huecos disponibles
  */
-const flowScheduleTechno = addKeyword(EVENTS.ACTION).addAction(async (ctx, { extensions, state, flowDynamic }) => {
-    console.log("flow agendar techno")
-    const currentState = state.getMyState()
+const flowScheduleTechno = addKeyword(EVENTS.ACTION).addAction(async (ctx, { extensions, state, flowDynamic, gotoFlow }) => {
+    console.log('flowScheduleTechno')
+    const currentState = state.getMyState() || {};
+    console.log(currentState)
+    reset(ctx, gotoFlow, 360000)
+    resetPrevious(ctx, 180000, flowDynamic, currentState.userName)
     if(currentState.birthday === true){
         return ""
     }
@@ -64,9 +68,12 @@ const flowScheduleTechno = addKeyword(EVENTS.ACTION).addAction(async (ctx, { ext
             content: `Cliente pregunta: ${ctx.body}`
         }
     ], 'gpt-4')
-
+    console.log('flowScheduleTechno linea 69')
+    console.log(text)
     await handleHistory({ content: text, role: 'assistant' }, state)
-
+    state.update({
+        scheduleTechno: true
+    });
     const chunks = text.split(/(?<!\d)\.\s+/g);
     for (const chunk of chunks) {
         await flowDynamic([{ body: chunk.trim(), delay: generateTimer(150, 250) }]);

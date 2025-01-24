@@ -2,15 +2,12 @@ import { addKeyword, EVENTS } from "@bot-whatsapp/bot";
 import postPoints from "src/services/endpoints/postPoints";
 import getUserInfo from "src/services/endpoints/userInformationService";
 import AIClass from "src/services/ai";
-import flowNoAnswer from "../birthday/noAnswer.flow";
 import { flowSeller } from "src/flows/seller.flow";
 import { handleHistory } from "src/utils/handleHistory";
-import flowFinancing from "./financing.flow";
 import { flowSchedule } from "src/flows/schedule.flow";
 import { flowScheduleTechno } from "./scheduleTechno.flow";
-// import flowFinal from "./final.flow";
-// import flowSmartTravel from "./smartTravel.flow";
-// import flowInTheMiddle from "./middle.flow";
+import { reset, resetPrevious } from "src/utils/idleCustom";
+import flowFinal from "../birthday/final.flow";
 
 
 const flowMiddleTechno = addKeyword(EVENTS.ACTION)
@@ -18,8 +15,8 @@ const flowMiddleTechno = addKeyword(EVENTS.ACTION)
         try {
             console.log('flowMiddleTechno');
             const currentState = state.getMyState() || {};
-            console.log(currentState)
-            console.log(currentState.userName)
+            reset(ctx, gotoFlow, 360000)
+            resetPrevious(ctx, 180000, flowDynamic, currentState.userName)
             if (currentState && currentState.userName !== "") {
                 await flowDynamic([
                     {
@@ -37,11 +34,11 @@ const flowMiddleTechno = addKeyword(EVENTS.ACTION)
             return true;
         }
     })
-    .addAction( async (ctx, { flowDynamic, state, extensions}) => {
+    .addAction( async (ctx, { flowDynamic, state, gotoFlow}) => {
             try {
                 const currentState = state.getMyState() || {};
-                console.log(currentState);
-                console.log("");
+                reset(ctx, gotoFlow, 360000)
+                resetPrevious(ctx, 180000, flowDynamic, currentState.userName)
                 if (currentState && currentState.userName !== "") {
                     await flowDynamic([
                         {
@@ -80,10 +77,24 @@ const flowMiddleTechno = addKeyword(EVENTS.ACTION)
                     const currentState = state.getMyState();
                     const userMessage = ctx.body.toLowerCase();
                     const ai = extensions.ai as AIClass;
-                    const prompt = `Analiza la respuesta del usuario: "${userMessage}" considerando que responde a la pregunta: "¿De que ciudad me estas hablando?"
-                    tomando encuenta estas ciudades de Colombia donde tenemos sucursales CDA  "Tunja", "Bogota", "Medellin" y "Cali "
+                    const prompt = `Analiza la respuesta: ${userMessage} considerando que responde a la pregunta: '¿De qué ciudad o pueblo de Colombia me está hablando?' y que se refiere a ciudades o pueblos colombianos.
 
-                    da una respuesta comentando en que ciudad tenenemos sucursales CDA y cual es la mas cercana que la respuesta sea clara y concisa`;
+                    Si la respuesta menciona directamente una de las ciudades donde tenemos sucursales CDA (Bogotá, Medellín, Cali), responde indicando que tenemos una sucursal en esa ciudad.
+                    Si la respuesta menciona otra ciudad o pueblo diferente:
+                    Calcula cuál es la sucursal más cercana entre Bogotá, Medellín y Cali.
+                    Proporciona la distancia aproximada (en kilómetros) desde esa ciudad/pueblo a nuestra sucursal más cercana.
+                    Responde de manera clara, mencionando que aunque no tenemos una sucursal en esa ciudad, indicamos la más cercana y la distancia.
+                    Responde en un tono amable, breve y profesional.
+                    Si no puedes interpretar la ubicación, responde con una lista clara de las sucursales disponibles:
+
+                    Ejemplo: "No estoy segura de la ciudad que mencionas, pero nuestras sucursales están en Bogotá, Medellín y Cali.", siempre ten encuenta la ciudad que se menciona aqui: "${userMessage}", siempre ten encuenta el contexto de ${userMessage}, ya que es la ciudad que el usuario menciono.
+                    Si concluyes que la ciudad es cali responde lo siguiente "muy bien, en cali tenemos al aliado la sucursal, ubicado en la carrera 70 # 2c-32\n
+
+                    tambien puedes llegar con la ubicion por google maps: [https://maps.app.goo.gl/5BA51ZbnyvG3RwZZ9](https://maps.app.goo.gl/5BA51ZbnyvG3RwZZ9)\n
+
+                    recuerda exigir que te escanen tu codigo qr para recibir los 5000 MotoPuntos de obsequio junto al 'bono de descuento de $25.000
+                    por favor dime la fecha y hora para agendar una cita prioritaria para ti!\n\n
+                    en el cda la sucursal hay atencion de 8am a 5pm de lunes a sabado `;
 
                     const response = await ai.createChat([
                         {
@@ -96,7 +107,7 @@ const flowMiddleTechno = addKeyword(EVENTS.ACTION)
                             delay: 2000
                         },
                         {
-                            body: "Te gustaria saber mas sobre la financiacion o quieres agendar una cita con nuestro aliado?",
+                            body: "Te gustaria agendar una cita con nuestro aliado?",
                             delay: 2000
                         }
                     ])
@@ -112,17 +123,33 @@ const flowMiddleTechno = addKeyword(EVENTS.ACTION)
                 }
             }
     )
-    .addAction( { capture:true, idle:2000 }, async (ctx, { flowDynamic, state, extensions, gotoFlow}) => {
+    .addAction( {capture:true}, async (ctx, { flowDynamic, state, extensions, gotoFlow}) => {
                 try { 
                     const currentState = state.getMyState();
                     const userMessage = ctx.body.toLowerCase();
                     const ai = extensions.ai as AIClass;
-                    const prompt = `Analiza la respuesta del usuario: "${userMessage}" considerando que responde a la pregunta: "¿Te gustaría saber más sobre la financiación o agendar una cita con nuestro aliado?"
+                    const prompt = `Analiza la respuesta del usuario: "${userMessage}" considerando que responde a la pregunta: "¿Te gustaría agendar una cita con nuestro aliado?"
+                    Instrucciones estrictas:
+                    - Si la respuesta contiene CUALQUIERA de estas palabras clave, devuelve OBLIGATORIAMENTE true:
+                    * sí
+                    * claro
+                    * ok
+                    * correcto
+                    * genial
+                    * bueno
+                    * perfecto
+                    * entendido
+                    * de acuerdo
+                    * está bien
+                    * correcto
 
-                    Si la respuesta es sobre financiación o préstamo, responde con "1".
-                    Si la respuesta es sobre agendar o algo relacionado, responde con "2".
-                    Si la respuesta es negativa o no relevante, responde con "3".
-                    Devuelve únicamente "1", "2" o "3" sin explicaciones adicionales`;
+                    - Analiza el sentido general de la respuesta
+                    - Si la respuesta es afirmativa o muestra disposición positiva, devuelve true
+                    - Si la respuesta es negativa o muestra dudas, devuelve false
+                    
+                    Si la respuesta es sobre agendar o algo relacionado positivamnete, responde con "true".
+                    Si la respuesta es negativa o no relevante, responde con "false".
+                    Devuelve únicamente "true" o "false" sin "explicaciones adicionales`;
 
                     const response = await ai.createChat([
                         {
@@ -131,31 +158,22 @@ const flowMiddleTechno = addKeyword(EVENTS.ACTION)
                         }
                     ]);
 
+                    const isPositive = response.trim() === 'true';
                     console.log(response);
-                    console.log(response === "1")
-                    if (response === "1") {
-                        gotoFlow(flowFinancing)
-                    } else if (response === "2") {
+                    console.log("flow middle",(isPositive === true))
+                    if (isPositive === true) {
+                        console.log("agendar middle 165")
                         state.update({
                             scheduleTechno: true
                         });
                         await handleHistory({ content: userMessage, role: 'user' }, state)
                         gotoFlow(flowScheduleTechno)
                     } else {
-                        await flowDynamic([
-                            {
-                                body: '¡Muy bien!',
-                                delay: 2000 
-                            },
-                            {
-                                body: 'Gracias por comunicarte con MotoSmart 🤜🤛.\n\Se un motociclista ejemplar, queremos que siempre regreses a casa 🛵🤟😎',
-                                delay: 2500 
-                            }
-                        ]);
                         state.update({ 
                             flag: false,
                             scheduleTechno: false
                         });
+                        gotoFlow(flowFinal)
                     }
                 } catch (error) {
                     console.error('Error en el proceso de registro:', error);

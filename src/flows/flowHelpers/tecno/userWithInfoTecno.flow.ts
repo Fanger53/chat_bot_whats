@@ -1,9 +1,8 @@
 import { addKeyword, EVENTS } from "@bot-whatsapp/bot";
 import AIClass from "src/services/ai";
 import { handleHistory } from "src/utils/handleHistory";
-import flowFinancing from "./financing.flow";
 import { flowScheduleTechno } from "./scheduleTechno.flow";
-import { reset, start } from "src/utils/idleCustom";
+import { startPrevious, reset, start, resetPrevious } from "src/utils/idleCustom";
 import { delay } from "@bot-whatsapp/bot/dist/utils";
 // import flowFinal from "./final.flow";
 // import flowSmartTravel from "./smartTravel.flow";
@@ -13,6 +12,7 @@ import { delay } from "@bot-whatsapp/bot/dist/utils";
 const flowUserWithInfoTecno = addKeyword(EVENTS.ACTION)
     .addAction(async (ctx, { flowDynamic, state, gotoFlow, extensions}) => {
         try {
+            console.log("flowUserWithInfoTecno")
             const ai = extensions.ai as AIClass;
                 const prompt = `Genera una pregunta casual y amigable para preguntar cómo está un usuario.
                 Reglas:
@@ -37,11 +37,11 @@ const flowUserWithInfoTecno = addKeyword(EVENTS.ACTION)
                     content: prompt
                 }
             ]);
-            start(ctx, gotoFlow, 90000)
-            console.log('flowUserWithInfoTecno');
             const currentState = state.getMyState() || {};
-            console.log(currentState)
-            console.log(currentState.userName)
+            reset(ctx, gotoFlow, 360000)
+            resetPrevious(ctx, 180000, flowDynamic, currentState.userName)
+            console.log('flowUserWithInfoTecno');
+
             if (currentState && currentState.userName !== "") {
                 await flowDynamic([
                     {
@@ -69,7 +69,9 @@ const flowUserWithInfoTecno = addKeyword(EVENTS.ACTION)
     })
     .addAction({ capture: true},async (ctx, { flowDynamic, state, gotoFlow, extensions}) => {
         try {
-            reset(ctx, gotoFlow, 90000)
+            const currentState = state.getMyState() || {};
+            reset(ctx, gotoFlow, 360000)
+            resetPrevious(ctx, 180000, flowDynamic, currentState.userName)
             const body = ctx.body
             const ai = extensions.ai as AIClass;
                 const prompt = `Toma esto "${body}" como contexto y responde de forma positiva.
@@ -98,7 +100,7 @@ const flowUserWithInfoTecno = addKeyword(EVENTS.ACTION)
                     delay: 2000
                 },
                 {
-                    body: "quiero contarte los beneficios que tienes por sacar la revision tecnico mecanica con uno de nuestros aliados😎🛵",
+                    body: "Genial, quiero contarte los beneficios que tienes por sacar la revision tecnico mecanica con uno de nuestros aliados😎🛵",
                     delay: 2000
                 }
             ]);
@@ -111,33 +113,38 @@ const flowUserWithInfoTecno = addKeyword(EVENTS.ACTION)
     })
     .addAction( async (ctx, { flowDynamic, state, extensions, gotoFlow}) => {
             try {
-                reset(ctx, gotoFlow, 90000)
                 const currentState = state.getMyState() || {};
-                console.log(currentState);
-                console.log("");
+                reset(ctx, gotoFlow, 360000)
+                resetPrevious(ctx, 180000, flowDynamic, currentState.userName)
+
                 if (currentState && currentState.userName !== "") {
                     await flowDynamic([
                         {
-                            body: `Cargaremos 5️⃣0️⃣0️⃣0️⃣ MotoPuntos a tu perfil para que los cambies por obsequios en cualquiera de nuestras marcas aliadas 🎁`,
+                            body: `No 1. Cargaremos *5️⃣0️⃣0️⃣0️⃣ MotoPuntos* a tu perfil para que los cambies por obsequios en cualquiera de nuestras marcas aliadas 🎁`,
                             delay: 5000
                         },
                         {
-                            body: `Puedes agendar una cita en nuestro CDA aliado, de esta manera no tendrás que hacer filas y menos demora tendrás 🤟`,
+                            body: `No 2. Puedes agendar una cita preferencial en nuestro CDA aliado, de esta manera no tendrás que hacer filas y menos demora tendrás 🤟`,
                             delay: 5000
                         }
                     ]);
                     if (currentState.is_premium){
-                        flowDynamic([
+                        await flowDynamic([
                             {
-                                body: 'Lo mejor de todo es que recibiras un *bono de descuento de $25.000*🤑 por ser un usuario MotosMart premium activo',
+                                body: 'No 3. Lo mejor de todo es que recibirás un *bono de descuento de $25.000* pesos🤑 por ser un usuario MotoSmart premium activo. El valor de la revisión técnico-mecánica para el año 2025 quedó en $207.700. Con el bono de descuento entregado por MotoSmart, solo pagas $182.700.',
                                 delay: 5000
                             }
                         ])
                     }
-                    await flowDynamic([{
-                        body: 'el valor de la revicion tecnicomecanica para el año 2025 quedo en $207.700 con el bono de descuento entregado por MotoSmart para ti solo p1agas $182.700',
-                        delay: 2000
-                    }])
+                    else {
+                        await flowDynamic([
+                            {
+                                body: 'No 3. Lo mejor de todo es que recibirás un bono de descuento de $15.000 pesos🤑 por hacer parte de la comunidad MotoSmart. El valor de la revisión técnico-mecánica para el año 2025 quedó en $207.700. Con el bono de descuento entregado por MotoSmart, solo pagas $192.700.',
+                                delay: 5000
+                            }
+                        ])
+                    }
+                    
                     await flowDynamic(`${currentState.userName}, ¿que te parecen estos beneficios por hacer parte de la comunidad MotoSmart?`);
                 } else {
                     return false;
@@ -155,6 +162,9 @@ const flowUserWithInfoTecno = addKeyword(EVENTS.ACTION)
     )
     .addAction({capture: true}, async (ctx, { flowDynamic, state, gotoFlow, extensions}) => {
         try {
+            const currentState = state.getMyState() || {};
+            reset(ctx, gotoFlow, 360000)
+            resetPrevious(ctx, 180000, flowDynamic, currentState.userName)
             const body = ctx.body
             const ai = extensions.ai as AIClass;
                 const prompt = `Toma esto "${body}" como contexto y responde a la pregunta: "¿Qué te parecen estos beneficios por hacer parte de la comunidad MotoSmart?". 
@@ -176,7 +186,7 @@ const flowUserWithInfoTecno = addKeyword(EVENTS.ACTION)
                     content: prompt
                 }
             ]);
-            reset(ctx, gotoFlow, 90000)
+
             await flowDynamic([
                 {
                     body: response,
@@ -199,6 +209,7 @@ const flowUserWithInfoTecno = addKeyword(EVENTS.ACTION)
                     reset(ctx, gotoFlow, 90000)
                     const currentState = state.getMyState();
                     const userMessage = ctx.body
+                    resetPrevious(ctx, 25000, flowDynamic, currentState.userName)
                     console.log(userMessage)
                     const ai = extensions.ai as AIClass;
                     const prompt = `Analiza la respuesta: ${userMessage} considerando que responde a la pregunta: '¿De qué ciudad o pueblo de Colombia me está hablando?' y que se refiere a ciudades o pueblos colombianos.
@@ -212,9 +223,9 @@ const flowUserWithInfoTecno = addKeyword(EVENTS.ACTION)
                     Si no puedes interpretar la ubicación, responde con una lista clara de las sucursales disponibles:
 
                     Ejemplo: "No estoy segura de la ciudad que mencionas, pero nuestras sucursales están en Bogotá, Medellín y Cali.", siempre ten encuenta la ciudad que se menciona aqui: "${userMessage}", siempre ten encuenta el contexto de ${userMessage}, ya que es la ciudad que el usuario menciono.
-                    Si concluyes que la ciudad es cali responde lo siguiente "muy bien, en cali tenemos al aliado la sucursal, ubicado en la carrera 70 # 2c-32\n\n
+                    Si concluyes que la ciudad es cali responde lo siguiente "muy bien, en cali tenemos al aliado la sucursal, ubicado en la carrera 70 # 2c-32\n
 
-                    tambien puedes llegar con la ubicion por google maps: [https://maps.app.goo.gl/5BA51ZbnyvG3RwZZ9](https://maps.app.goo.gl/5BA51ZbnyvG3RwZZ9)\n\n
+                    tambien puedes llegar con la ubicion por google maps: [https://maps.app.goo.gl/5BA51ZbnyvG3RwZZ9](https://maps.app.goo.gl/5BA51ZbnyvG3RwZZ9)\n
 
                     recuerda exigir que te escanen tu codigo qr para recibir los 5000 MotoPuntos de obsequio junto al 'bono de descuento de $25.000
                     por favor dime la fecha y hora para agendar una cita prioritaria para ti!\n\n
@@ -248,17 +259,34 @@ const flowUserWithInfoTecno = addKeyword(EVENTS.ACTION)
             }
     )
     .addAction( { capture:true }, async (ctx, { flowDynamic, state, extensions, gotoFlow}) => {
-                reset(ctx, gotoFlow, 90000)
-                try { 
-                    const currentState = state.getMyState();
+                try {
+                    const currentState = state.getMyState() || {};
+                    reset(ctx, gotoFlow, 360000)
+                    resetPrevious(ctx, 180000, flowDynamic, currentState.userName)
                     const userMessage = ctx.body.toLowerCase();
                     const ai = extensions.ai as AIClass;
                     const prompt = `Analiza la respuesta del usuario: "${userMessage}" considerando que responde a la pregunta: "¿Te gustaría agendar una cita con nuestro aliado?"
+                    Instrucciones estrictas:
+                    - Si la respuesta contiene CUALQUIERA de estas palabras clave, devuelve OBLIGATORIAMENTE true:
+                    * sí
+                    * claro
+                    * ok
+                    * correcto
+                    * genial
+                    * bueno
+                    * perfecto
+                    * entendido
+                    * de acuerdo
+                    * está bien
+                    * correcto
 
-                    Si la respuesta es sobre financiación o préstamo, responde con "1".
-                    Si la respuesta es sobre agendar o algo relacionado, responde con "2".
-                    Si la respuesta es negativa o no relevante, responde con "3".
-                    Devuelve únicamente "1", "2" o "3" sin explicaciones adicionales`;
+                    - Analiza el sentido general de la respuesta
+                    - Si la respuesta es afirmativa o muestra disposición positiva, devuelve true
+                    - Si la respuesta es negativa o muestra dudas, devuelve false
+                    
+                    Si la respuesta es sobre agendar o algo relacionado positivamnete, responde con "true".
+                    Si la respuesta es negativa o no relevante, responde con "false".
+                    Devuelve únicamente "true" o "false" sin "explicaciones adicionales`;
 
                     const response = await ai.createChat([
                         {
@@ -267,11 +295,11 @@ const flowUserWithInfoTecno = addKeyword(EVENTS.ACTION)
                         }
                     ]);
 
+                    const isPositive = response.trim() === 'true';
                     console.log(response);
-                    console.log(response === "1")
-                    if (response === "1") {
-                        console.log("financing")
-                    } else if (response === "2") {
+                    console.log(isPositive === true)
+                    if (isPositive === true) {
+                        console.log("agendar")
                         state.update({
                             scheduleTechno: true
                         });

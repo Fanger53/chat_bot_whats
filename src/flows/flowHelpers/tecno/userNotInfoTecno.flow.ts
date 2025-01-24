@@ -2,11 +2,13 @@ import { addKeyword, EVENTS } from "@bot-whatsapp/bot";
 import getUserInfo from "src/services/endpoints/userInformationService";
 import AIClass from "src/services/ai";
 import flowPhoneNumberTecno from "./phoneNumberTecno.flow";
+import { reset, resetPrevious } from "src/utils/idleCustom";
 
 const flowUserNotInfoTecno = addKeyword(EVENTS.ACTION)
-    .addAction( async (ctx, { flowDynamic, state, extensions }) => {
-            console.log('flowUserNotInfoTecno')
-            console.log("Capturing phone:", ctx.body);
+    .addAction( async (ctx, { flowDynamic, state, extensions, gotoFlow }) => {
+            const currentState = state.getMyState() || {};
+            reset(ctx, gotoFlow, 360000)
+            resetPrevious(ctx, 180000, flowDynamic, currentState.userName)
             try {
                 const ai = extensions.ai as AIClass;
                 const prompt = `Genera una pregunta casual y amigable para pedirle el nombre a un usuario.
@@ -56,12 +58,35 @@ const flowUserNotInfoTecno = addKeyword(EVENTS.ACTION)
     )
     .addAction({ capture: true, idle:3000 }, async (ctx, { flowDynamic, state, extensions, gotoFlow }) => {
                 try {
+                    const currentState = state.getMyState() || {};
+                    reset(ctx, gotoFlow, 360000)
+                    resetPrevious(ctx, 180000, flowDynamic, currentState.userName)
                     const userInput = ctx.body;
-                    
                     const ai = extensions.ai as AIClass;
-                    const prompt = `Extrae el nombre de la siguiente frase: "${userInput}" solo el nombre no el prompt, ejemplo de la frase "me llamo leo" devuelve leo, solo devuelve el nombre otro ejemplo es que "${userInput}" puede ser solo el nombre: leo entoces tu respuesta sera leo, solo responde el nombre nada mas ninguna frase mas si el nombre es angela responde angela, si el nombre extraido es andres responde andres nada mas `;
+                    const prompt = `Extrae el nombre de la siguiente frase o palabra: "${userInput}" el contexto es que esto es el input del user y es el nombre "${userInput}" el nombre del usuario este es el contexto "me llamo ${userInput}"
+                        INSTRUCCIONES:
+                        1. Si el input es un nombre solo (ejemplo: "Harold"), devuelve ese nombre directamente
+                        2. Si el input es una frase (ejemplo: "me llamo Leo"), extrae solo el nombre
+                        3. NO agregues ningún texto adicional en la respuesta
+                        4. NO hagas preguntas ni solicites información adicional
+                        5. La respuesta debe ser ÚNICAMENTE el nombre extraído
+
+                        Ejemplos válidos:
+                        Input -> Respuesta esperada
+                        "Harold" -> "Harold"
+                        "me llamo Leo" -> "Leo"
+                        "soy Pedro" -> "Pedro"
+                        "Angela" -> "Angela"
+                        "Andres" -> "Andres"
+                        "Mi nombre es María" -> "María"
+
+                        IMPORTANTE: 
+                        - Si recibes una sola palabra, asume que es un nombre
+                        - NO incluyas puntuación ni texto adicional
+                        - NO solicites información adicional
+                        - NO hagas preguntas de seguimiento   no olvides el contexto es que esto es el input del user y es el nombre "${userInput}"`;
                     const response = await ai.createChat([
-                    { role: 'user', content: prompt }
+                    { role: 'system', content: prompt }
                     ]);
 
                     // Extraer el nombre de la respuesta de la IA

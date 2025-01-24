@@ -3,6 +3,9 @@ import AIClass from "../../../services/ai";
 import { clearHistory, handleHistory, getHistoryParse } from "../../../utils/handleHistory";
 import { getFullCurrentDate } from "../../../utils/currentDate";
 import { appToCalendarTechno } from "src/services/calendar/techno";
+import { reset, resetPrevious, stop, stopPrevious } from "src/utils/idleCustom";
+import formatDate from "src/utils/formatDate";
+import { sendMessage } from "src/services/endpoints/whatsappSendMessage";
 
 const generatePromptToFormatDate = (history: string) => {
     const prompt = `Fecha de Hoy:${getFullCurrentDate()}, Basado en el Historial de conversacion: 
@@ -20,10 +23,10 @@ const generateJsonParse = (info: string) => {
     
     {
         "name": "Leifer",
-        "interest": "n/a",
-        "value": "0",
-        "plate": "ABC123",
-        "startDate": "2024/02/15 00:00:00"
+        "type": "cda",
+        "plate": "ABC123A",
+        "startDate": "2024/02/15 00:00",
+        "phone": "573000000000"
     }
     
     Objeto JSON a generar:`
@@ -34,10 +37,14 @@ const generateJsonParse = (info: string) => {
 /**
  * Encargado de pedir los datos necesarios para registrar el evento en el calendario
  */
-const flowConfirmTechno = addKeyword(EVENTS.ACTION).addAction(async (_, { flowDynamic }) => {
+const flowConfirmTechno = addKeyword(EVENTS.ACTION).addAction(async (ctx, { flowDynamic, gotoFlow, state }) => {
+    reset(ctx, gotoFlow, 90000)
     console.log("flowConfirmTechno")
+    const currentState = state.getMyState() || {};
+    reset(ctx, gotoFlow, 360000)
+    resetPrevious(ctx, 180000, flowDynamic, currentState.userName)
     await flowDynamic('Ok, voy a pedirte unos datos para agendar')
-    await flowDynamic('¿Cual es tu nombre?')
+    await flowDynamic('¿Cual es tu nombre completo?')
 }).addAction({ capture: true }, async (ctx, { state, flowDynamic, extensions }) => {
     await state.update({ name: ctx.body })
     const ai = extensions.ai as AIClass
@@ -50,14 +57,16 @@ const flowConfirmTechno = addKeyword(EVENTS.ACTION).addAction(async (_, { flowDy
     ], 'gpt-4')
 
     await handleHistory({ content: text, role: 'assistant' }, state)
-    await flowDynamic(`¿Me confirmas fecha y hora?: ${text}`)
+    await flowDynamic(`¿Me confirmas fecha y hora?: ${formatDate(text)}`)
     await state.update({ startDate: text })
 })
     .addAction({ capture: true }, async (ctx, { state, flowDynamic }) => {
         await flowDynamic(`Ultima pregunta ¿Cual es la placa de tu moto?`)
     })
     .addAction({ capture: true }, async (ctx, { state, extensions, flowDynamic }) => {
-        const infoCustomer = `Name: ${state.get('name')}, StarteDate: ${state.get('startDate')}, plate: ${ctx.body}`
+        await state.update({ plate: ctx.body })
+        const currentState = state.getMyState() || {};
+        const infoCustomer = `Name: ${currentState.name}, StarteDate: ${currentState.startDate}, plate: ${ctx.body}, type: cda, phone: ${ctx.from}`
         const ai = extensions.ai as AIClass
 
         const text = await ai.createChat([
@@ -68,11 +77,19 @@ const flowConfirmTechno = addKeyword(EVENTS.ACTION).addAction(async (_, { flowDy
         ])
 
         await appToCalendarTechno(text)
-        await flowDynamic(`muy bien ${state.get('name')}, tu cita a sido agendada para ${state.get('startDate')}`)
+        await flowDynamic(`muy bien ${currentState.name}, tu cita a sido agendada para ${formatDate(currentState.startDate)}`)
         clearHistory(state)
+        flowDynamic("¿te puedo ayudar con algo mas?")
         state.update({
             scheduleTechno: false
         });
-    })
+        stop(ctx)
+        stopPrevious(ctx)
+        console.log('current state', currentState)
+        console.log('placa', currentState.plate)
+        let message = `¡Hola!\nEl usuario ${currentState.name} con placa ${currentState.plate} de MotoSmart App  a agendando una cita para su revisión técnico mecánica para  ${formatDate(currentState.startDate)}\n https://docs.google.com/spreadsheets/d/1kWXzc52b3eALRBlgAzvwabOuxwNaC8QAbk4sn28fH_M/edit?usp=sharing`
+
+        sendMessage("573156101101", message)
+    });
 
 export { flowConfirmTechno }

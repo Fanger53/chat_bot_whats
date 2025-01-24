@@ -4,9 +4,11 @@ import AIClass from "../services/ai"
 import { flowSeller } from "../flows/seller.flow"
 import { flowSchedule } from "../flows/schedule.flow"
 import { flowConfirm } from "../flows/confirm.flow"
-import { flowBirthday } from "src/flows/birthday.flow"
+import { flowBirthday } from "src/flows/flowHelpers/birthday/birthday.flow"
 import { flowScheduleTechno } from "src/flows/flowHelpers/tecno/scheduleTechno.flow"
 import { flowConfirmTechno } from "src/flows/flowHelpers/tecno/confirmTechno.flow"
+import { flowScheduleBirthday } from "src/flows/flowHelpers/birthday/scheduleBirthday.flow"
+import { flowConfirmBirthday } from "src/flows/flowHelpers/birthday/confirmBirthday.flow"
 
 /**
  * Determina que flujo va a iniciarse basado en el historial que previo entre el bot y el humano
@@ -38,17 +40,30 @@ export default async (_: BotContext, { state, gotoFlow, extensions }: BotMethods
         }
     ])
 
+    console.log("confirmar:", (text.includes('CONFIRMAR')))
+    console.log("flag_shedule techno:", currentState.scheduleTechno)
     if (text.includes('HABLAR')) return gotoFlow(flowSeller)
+
     if (text.includes('AGENDAR') && currentState.scheduleTechno === true) return gotoFlow(flowScheduleTechno)
-        if (text.includes('CONFIRMAR') && currentState.scheduleTechno === true) return gotoFlow(flowConfirmTechno)
-    if (text.includes('AGENDAR') && currentState.scheduleTechno === false) return gotoFlow(flowSchedule)
-    if (text.includes('CONFIRMAR') && currentState.scheduleTechno === false) return gotoFlow(flowConfirm)
+
+    if (text.includes('CONFIRMAR') && currentState.scheduleTechno === true) return gotoFlow(flowConfirmTechno)
+
+    if (text.includes('AGENDAR') && currentState.scheduleBirthday === true) return gotoFlow(flowScheduleBirthday)
+    
+    if (text.includes('CONFIRMAR') && currentState.scheduleBirthday === true) return gotoFlow(flowConfirmBirthday)
+
+    console.log("agendar:", (text.includes('AGENDAR')))
+    console.log("flag:", currentState.scheduleTechno === false)
+    console.log("main linea 44",(text.includes('AGENDAR') && currentState.scheduleTechno === false))
+    if ((text.includes('AGENDAR') && currentState.scheduleTechno === false) || (text.includes('AGENDAR') && currentState.scheduleBirthday === false)) return gotoFlow(flowSchedule)
+        
+    if ((text.includes('CONFIRMAR') && currentState.scheduleTechno === false) || (text.includes('AGENDAR') && currentState.scheduleBirthday === false)) return gotoFlow(flowConfirm)
         console.log('linea 46')
-    console.log(text.includes('CUMPLEAÑOS'))
-    if (text.includes('CUMPLEAÑOS')) {
-        state.update({ 
-            flag:true
-        });
-        return gotoFlow(flowBirthday)
-    }
+    // console.log(text.includes('CUMPLEAÑOS linea 47'))
+    // if (text.includes('CUMPLEAÑOS')) {
+    //     state.update({ 
+    //         flag:true
+    //     });
+    //     return gotoFlow(flowBirthday)
+    // }
 }
