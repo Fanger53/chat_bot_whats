@@ -1,17 +1,17 @@
 import { addKeyword, EVENTS } from "@bot-whatsapp/bot";
-import AIClass from "../services/ai";
-import { clearHistory, handleHistory, getHistoryParse } from "../utils/handleHistory";
-import { getFullCurrentDate } from "../utils/currentDate";
-import { appToCalendar } from "src/services/calendar";
-import { reset, resetPrevious, stop, stopPrevious,} from "src/utils/idleCustom";
+import AIClass from "../../../services/ai";
+import { clearHistory, handleHistory, getHistoryParse } from "../../../utils/handleHistory";
+import { getFullCurrentDate } from "../../../utils/currentDate";
+import { appToCalendarTechno } from "src/services/calendar/techno";
+import { reset, resetPrevious, stop, stopPrevious } from "src/utils/idleCustom";
 import formatDate from "src/utils/formatDate";
-import flowFinal from "./flowHelpers/birthday/final.flow";
+import { sendMessage } from "src/services/endpoints/whatsappSendMessage";
 
 const generatePromptToFormatDate = (history: string) => {
     const prompt = `Fecha de Hoy:${getFullCurrentDate()}, Basado en el Historial de conversacion: 
     ${history}
     ----------------
-    Fecha ideal: yyyy / mm / dd /  hh:mm`
+    Fecha ideal: yyyy / dd / mm /  hh:mm`
 
     return prompt
 }
@@ -24,7 +24,6 @@ const generateJsonParse = (info: string) => {
     {
         "name": "Leifer",
         "type": "cda",
-        "plate": "ABC123A",
         "startDate": "2024/02/15 00:00",
         "phone": "573000000000"
     }
@@ -37,13 +36,14 @@ const generateJsonParse = (info: string) => {
 /**
  * Encargado de pedir los datos necesarios para registrar el evento en el calendario
  */
-const flowConfirm = addKeyword(EVENTS.ACTION).addAction(async (ctx, { flowDynamic, state, gotoFlow }) => {
-    console.log("flowConfirm")
+const flowConfirmBirthday = addKeyword(EVENTS.ACTION).addAction(async (ctx, { flowDynamic, gotoFlow, state }) => {
+    reset(ctx, gotoFlow, 90000)
+    console.log("flowConfirmBirthday")
     const currentState = state.getMyState() || {};
     reset(ctx, gotoFlow, 360000)
     resetPrevious(ctx, 180000, flowDynamic, currentState.userName)
     await flowDynamic('Ok, voy a pedirte unos datos para agendar')
-    await flowDynamic('¿Cual es tu nombre?')
+    await flowDynamic('¿Cual es tu nombre completo?')
 }).addAction({ capture: true }, async (ctx, { state, flowDynamic, extensions }) => {
     await state.update({ name: ctx.body })
     const ai = extensions.ai as AIClass
@@ -59,9 +59,12 @@ const flowConfirm = addKeyword(EVENTS.ACTION).addAction(async (ctx, { flowDynami
     await flowDynamic(`¿Me confirmas fecha y hora?: ${formatDate(text)}`)
     await state.update({ startDate: text })
 })
-    .addAction({ capture: true }, async (ctx, { state, extensions, flowDynamic, gotoFlow }) => {
+    .addAction({ capture: true }, async (ctx, { state, flowDynamic }) => {
+        await flowDynamic(`Ultima pregunta ¿Cual es tu email?`)
+    })
+    .addAction({ capture: true }, async (ctx, { state, extensions, flowDynamic }) => {
         const currentState = state.getMyState() || {};
-        const infoCustomer = `Name: ${currentState.name}, StarteDate: ${currentState.startDate}, plate: ${ctx.body}, type: default, phone: ${ctx.from}`
+        const infoCustomer = `Name: ${currentState.name}, StarteDate: ${currentState.startDate}, plate: ${ctx.body}, type: smart, phone: ${ctx.from}`
         const ai = extensions.ai as AIClass
 
         const text = await ai.createChat([
@@ -71,10 +74,17 @@ const flowConfirm = addKeyword(EVENTS.ACTION).addAction(async (ctx, { flowDynami
             }
         ])
 
-        await appToCalendar(text)
-        await flowDynamic(`${state.get('name')}, tu cita a sido agendada para ${formatDate(state.get('startDate'))}`)
+        await appToCalendarTechno(text)
+        await flowDynamic(`muy bien ${currentState.name}, tu cita a sido agendada para ${formatDate(currentState.startDate)}`)
         clearHistory(state)
-        gotoFlow(flowFinal)
-    })
+        state.update({
+            scheduleTechno: false
+        });
+        flowDynamic("¿te puedo ayudar con algo mas?")
+        stop(ctx)
+        stopPrevious(ctx)
+        let message = `¡Hola!\nEl usuario ${currentState.name} de MotoSmart App requiere más información sobre el bono de $200.000. Consulta su información en el siguiente enlace:\nhttps://docs.google.com/spreadsheets/d/1kWXzc52b3eALRBlgAzvwabOuxwNaC8QAbk4sn28fH_M/edit?usp=sharing`
+        sendMessage("573165791973", ``)
+    });
 
-export { flowConfirm }
+export { flowConfirmBirthday }
