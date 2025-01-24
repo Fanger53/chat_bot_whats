@@ -2,7 +2,7 @@ import axios from 'axios';
 
 export const sendMessage = async (phone: string, message: string) => {
     try {
-        const response = await axios.post('http://162.243.164.134:3002/send-message', {
+        const response = await axios.post('http://162.243.164.134:3003/send-message', {
             phone: phone,
             message: message
         }, {
