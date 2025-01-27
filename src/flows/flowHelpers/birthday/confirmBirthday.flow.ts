@@ -83,8 +83,8 @@ const flowConfirmBirthday = addKeyword(EVENTS.ACTION).addAction(async (ctx, { fl
         flowDynamic("¿te puedo ayudar con algo mas?")
         stop(ctx)
         stopPrevious(ctx)
-        let message = `¡Hola!\nEl usuario ${currentState.name} de MotoSmart App requiere más información sobre el bono de $200.000. Consulta su información en el siguiente enlace:\nhttps://docs.google.com/spreadsheets/d/1kWXzc52b3eALRBlgAzvwabOuxwNaC8QAbk4sn28fH_M/edit?usp=sharing`
-        sendMessage("573165791973", ``)
+        let message = `¡Hola!\nEl usuario ${currentState.name} con placa ${currentState.plate} de MotoSmart App  a agendando una cita para su revisión técnico mecánica para  ${formatDate(currentState.startDate)}\nPuedes consultar la agenda en este link👇👇\nhttps://docs.google.com/spreadsheets/d/1kWXzc52b3eALRBlgAzvwabOuxwNaC8QAbk4sn28fH_M/edit?usp=sharing`
+        sendMessage("573165791973", message)
     });
 
 export { flowConfirmBirthday }

@@ -87,7 +87,7 @@ const flowConfirmTechno = addKeyword(EVENTS.ACTION).addAction(async (ctx, { flow
         stopPrevious(ctx)
         console.log('current state', currentState)
         console.log('placa', currentState.plate)
-        let message = `¡Hola!\nEl usuario ${currentState.name} con placa ${currentState.plate} de MotoSmart App  a agendando una cita para su revisión técnico mecánica para  ${formatDate(currentState.startDate)}\n https://docs.google.com/spreadsheets/d/1kWXzc52b3eALRBlgAzvwabOuxwNaC8QAbk4sn28fH_M/edit?usp=sharing`
+        let message = `¡Hola!\nEl usuario ${currentState.name} con placa ${currentState.plate} de MotoSmart App  a agendando una cita para su revisión técnico mecánica para  ${formatDate(currentState.startDate)}\nPuedes consultar la agenda en este link👇👇\nhttps://docs.google.com/spreadsheets/d/1kWXzc52b3eALRBlgAzvwabOuxwNaC8QAbk4sn28fH_M/edit?usp=sharing`
 
         sendMessage("573156101101", message)
     });
