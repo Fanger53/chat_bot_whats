@@ -88,13 +88,14 @@ const flowMiddleTechno = addKeyword(EVENTS.ACTION)
                     Si no puedes interpretar la ubicación, responde con una lista clara de las sucursales disponibles:
 
                     Ejemplo: "No estoy segura de la ciudad que mencionas, pero nuestras sucursales están en Bogotá, Medellín y Cali.", siempre ten encuenta la ciudad que se menciona aqui: "${userMessage}", siempre ten encuenta el contexto de ${userMessage}, ya que es la ciudad que el usuario menciono.
-                    Si concluyes que la ciudad es cali responde lo siguiente "muy bien, en cali tenemos al aliado la sucursal, ubicado en la carrera 70 # 2c-32\n
+                    Si concluyes que la ciudad es cali responde lo siguiente "Muy bien, en Cali tenemos al aliado la sucursal ubicado en la carrera 70 # 2c-32. 
 
-                    tambien puedes llegar con la ubicion por google maps: [https://maps.app.goo.gl/5BA51ZbnyvG3RwZZ9](https://maps.app.goo.gl/5BA51ZbnyvG3RwZZ9)\n
+                    Puedes llegar con la ubicación por Google Maps: 👇👇
+                    [https://maps.app.goo.gl/5BA51ZbnyvG3RwZZ9](https://maps.app.goo.gl/5BA51ZbnyvG3RwZZ9). 
 
-                    recuerda exigir que te escanen tu codigo qr para recibir los 5000 MotoPuntos de obsequio junto al 'bono de descuento de $25.000
-                    por favor dime la fecha y hora para agendar una cita prioritaria para ti!\n\n
-                    en el cda la sucursal hay atencion de 8am a 5pm de lunes a sabado `;
+                    Recuerda exigirle al aliado que escanee tu código QR para que puedas recibir el descuento de $${currentState.is_premium ? "25.000" : "15000"} pesos y sumar 5000 MotoPuntos de obsequio por usar nuestras alianzas.
+
+                    Nuestro aliado tiene atención de 8am a 5pm de lunes a sábado" `;
 
                     const response = await ai.createChat([
                         {
