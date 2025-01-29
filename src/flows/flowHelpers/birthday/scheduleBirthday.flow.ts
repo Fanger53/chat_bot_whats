@@ -72,7 +72,7 @@ const flowScheduleBirthday = addKeyword(EVENTS.ACTION).addAction(async (ctx, { e
     console.log(text)
     await handleHistory({ content: text, role: 'assistant' }, state)
     state.update({
-        scheduleTechno: true
+        scheduleBirthday: true
     });
     const chunks = text.split(/(?<!\d)\.\s+/g);
     for (const chunk of chunks) {
