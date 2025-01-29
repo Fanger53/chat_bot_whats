@@ -48,7 +48,7 @@ const flowScheduleTechno = addKeyword(EVENTS.ACTION).addAction(async (ctx, { ext
     reset(ctx, gotoFlow, 360000)
     resetPrevious(ctx, 180000, flowDynamic, currentState.userName)
     if(currentState.birthday === true){
-        return ""
+        return console.log("no sigue el flujo")
     }
     await flowDynamic('dame un momento para consultar la agenda...')
     const ai = extensions.ai as AIClass

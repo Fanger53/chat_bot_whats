@@ -35,10 +35,11 @@ const welcome_flow_default = addKeyword(EVENTS.WELCOME).addAction(async (ctx, { 
             return gotoFlow(flowTecno);
         } else {
             if (currentState.scheduleTechno === true) {
-                return "confirm techno";
+                return console.log("confirm techno");
             } else {
                 stop(ctx);
                 stopPrevious(ctx);
+                console.log("flowWelcome 42");
                 state.update({ flag: false, scheduleTechno: false, scheduleBirthday: false });
             }
         }
