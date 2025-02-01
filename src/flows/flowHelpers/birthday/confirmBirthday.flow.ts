@@ -53,7 +53,7 @@ const flowConfirmBirthday = addKeyword(EVENTS.ACTION).addAction(async (ctx, { fl
             role: 'system',
             content: generatePromptToFormatDate(history)
         }
-    ], 'gpt-4')
+    ], 'qwen-max')
 
     await handleHistory({ content: text, role: 'assistant' }, state)
     await flowDynamic(`¿Me confirmas fecha y hora?: ${formatDate(text)}`)

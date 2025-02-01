@@ -44,6 +44,8 @@ export default async (_: BotContext, { state, gotoFlow, extensions }: BotMethods
     console.log("flag_shedule techno:", currentState.scheduleTechno)
     if (text.includes('HABLAR')) return gotoFlow(flowSeller)
 
+    console.log("shedule techno:", currentState.scheduleTechno)
+    console.log("agendar:", (text.includes('AGENDAR')))
     if (text.includes('AGENDAR') && currentState.scheduleTechno === true) return gotoFlow(flowScheduleTechno)
 
     if (text.includes('CONFIRMAR') && currentState.scheduleTechno === true) return gotoFlow(flowConfirmTechno)

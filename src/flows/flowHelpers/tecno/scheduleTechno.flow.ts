@@ -42,41 +42,44 @@ const generateSchedulePrompt = (schedule: string, history: string) => {
  * Hable sobre todo lo referente a agendar citas, revisar historial saber si existe huecos disponibles
  */
 const flowScheduleTechno = addKeyword(EVENTS.ACTION).addAction(async (ctx, { extensions, state, flowDynamic, gotoFlow }) => {
-    console.log('flowScheduleTechno')
-    const currentState = state.getMyState() || {};
-    console.log(currentState)
-    reset(ctx, gotoFlow, 360000)
-    resetPrevious(ctx, 180000, flowDynamic, currentState.userName)
-    if(currentState.birthday === true){
-        return console.log("no sigue el flujo")
-    }
-    await flowDynamic('dame un momento para consultar la agenda...')
-    const ai = extensions.ai as AIClass
-    const history = getHistoryParse(state)
-    const list = await getCurrentCalendar()
-    console.log(history)
-    console.log(list)
-    const promptSchedule = generateSchedulePrompt(list?.length ? list : 'ninguna', history)
-
-    const text = await ai.createChat([
-        {
-            role: 'system',
-            content: promptSchedule
-        },
-        {
-            role: 'user',
-            content: `Cliente pregunta: ${ctx.body}`
+    try {
+        console.log('flowScheduleTechno')
+        const currentState = state.getMyState() || {};
+        console.log(currentState)
+        reset(ctx, gotoFlow, 360000)
+        resetPrevious(ctx, 180000, flowDynamic, currentState.userName)
+        if(currentState.birthday === true){
+            return console.log("no sigue el flujo")
         }
-    ], 'gpt-4')
-    console.log('flowScheduleTechno linea 69')
-    console.log(text)
-    await handleHistory({ content: text, role: 'assistant' }, state)
-    state.update({
-        scheduleTechno: true
-    });
-    const chunks = text.split(/(?<!\d)\.\s+/g);
-    for (const chunk of chunks) {
-        await flowDynamic([{ body: chunk.trim(), delay: generateTimer(150, 250) }]);
+        await flowDynamic('dame un momento para consultar la agenda...')
+        const ai = extensions.ai as AIClass
+        const history = getHistoryParse(state)
+        const list = await getCurrentCalendar()
+        console.log(history)
+        const promptSchedule = generateSchedulePrompt(list?.length ? list : 'ninguna', history)
+        console.log(promptSchedule)
+        const text = await ai.createChat([
+            {
+                role: 'system',
+                content: promptSchedule
+            },
+            {
+                role: 'user',
+                content: `Cliente pregunta: ${ctx.body}`
+            }
+        ], 'qwen-max')
+        console.log('flowScheduleTechno linea 69')
+        console.log(text)
+        await handleHistory({ content: text, role: 'assistant' }, state)
+        state.update({
+            scheduleTechno: true
+        });
+        const chunks = text.split(/(?<!\d)\.\s+/g);
+        for (const chunk of chunks) {
+            await flowDynamic([{ body: chunk.trim(), delay: generateTimer(150, 250) }]);
+        }
+    } catch (error) {
+        console.error('Error in flowSchedule:', error);
     }
 
 })
