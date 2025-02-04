@@ -258,7 +258,7 @@ const flowInTheMiddle = addKeyword(EVENTS.ACTION)
                             role: 'user',
                             content: `Cliente pregunta: Quiero agendar una cita`
                         }
-                    ], 'gpt-4')
+                    ], 'qwen-max')
                 
                     await handleHistory({ content: text, role: 'assistant' }, state)
                     state.update({ 

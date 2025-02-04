@@ -1,32 +1,47 @@
 import OpenAI from "openai";
-import { ChatCompletionMessageParam } from "openai/resources/chat";
 
+// Definición manual del tipo ChatCompletionMessageParam
+type ChatCompletionMessageParam =
+    | {
+          role: "system" | "user" | "assistant";
+          content: string;
+      }
+    | {
+          role: "function";
+          name: string;
+          content: string;
+      };
 
 class AIClass {
     private openai: OpenAI;
-    private model: string
+    private model: string;
 
     constructor(apiKey: string, _model: string) {
-        this.openai = new OpenAI({ apiKey, timeout: 15 * 1000 });
         if (!apiKey || apiKey.length === 0) {
-            throw new Error("OPENAI_KEY is missing");
+            throw new Error("DASHSCOPE_API_KEY is missing");
         }
 
-        this.model = _model
+        this.openai = new OpenAI({
+            apiKey: apiKey,
+            baseURL: "https://dashscope-intl.aliyuncs.com/compatible-mode/v1",
+            timeout: 15 * 1000,
+        });
+
+        this.model = _model;
     }
 
     /**
      * 
-     * @param messages 
-     * @param model 
-     * @param temperature 
-     * @returns 
+     * @param messages - Array de mensajes de chat
+     * @param model - Modelo opcional (si no se proporciona, usa el modelo predeterminado)
+     * @param temperature - Controla la creatividad de las respuestas
+     * @returns Respuesta generada por Qwen
      */
     createChat = async (
         messages: ChatCompletionMessageParam[],
         model?: string,
-        temperature = 0
-    ) => {
+        temperature: number = 0
+    ): Promise<string> => {
         try {
             const completion = await this.openai.chat.completions.create({
                 model: model ?? this.model,
@@ -38,13 +53,12 @@ class AIClass {
                 presence_penalty: 0,
             });
 
-            return completion.choices[0].message.content;
+            return completion.choices[0].message.content || "Sin respuesta";
         } catch (err) {
             console.error(err);
             return "ERROR";
         }
     };
-
 }
 
 export default AIClass;

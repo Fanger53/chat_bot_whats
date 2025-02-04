@@ -67,7 +67,7 @@ const flowScheduleBirthday = addKeyword(EVENTS.ACTION).addAction(async (ctx, { e
             role: 'user',
             content: `Cliente pregunta: ${ctx.body}`
         }
-    ], 'gpt-4')
+    ], 'qwen-max')
     console.log('flowScheduleBirthday linea 69')
     console.log(text)
     await handleHistory({ content: text, role: 'assistant' }, state)

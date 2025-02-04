@@ -66,7 +66,7 @@ const flowSchedule = addKeyword(EVENTS.ACTION).addAction(async (ctx, { extension
             role: 'user',
             content: `Cliente pregunta: ${ctx.body}`
         }
-    ], 'gpt-4')
+    ], 'qwen-max')
 
     await handleHistory({ content: text, role: 'assistant' }, state)
 

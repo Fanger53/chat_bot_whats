@@ -17,19 +17,36 @@ const generatePromptToFormatDate = (history: string) => {
 }
 
 const generateJsonParse = (info: string) => {
-    const prompt = `tu tarea principal es analizar la información proporcionada en el contexto y generar un objeto JSON que se adhiera a la estructura especificada a continuación. 
+    const prompt = `
+                Tu tarea es analizar el contexto proporcionado y generar un objeto JSON que se adhiera estrictamente a la estructura especificada. Asegúrate de cumplir con las siguientes reglas:
+                1. Entrada: El contexto incluirá información en formato de texto o variables interpoladas (por ejemplo, ${info}).
+                2. Salida: Debes generar un objeto JSON válido con los campos exactos indicados en la estructura.
+                3. Formato: El objeto JSON debe ser devuelto directamente, sin comillas extras, comentarios ni texto adicional.
+                4. Campos obligatorios: Los campos 'name', 'type', 'plate', 'startDate' y 'phone' deben estar presentes en el objeto JSON.
 
-    Contexto: "${info}"
-    
-    {
-        "name": "Leifer",
-        "type": "cda",
-        "plate": "ABC123A",
-        "startDate": "2024/02/15 00:00",
-        "phone": "573000000000"
-    }
-    
-    Objeto JSON a generar:`
+                Contexto:  
+                ${info}
+
+                Estructura del Objeto JSON a Generar:
+                {
+                    "name": "string",
+                    "type": "string",
+                    "plate": "string",
+                    "startDate": "string",
+                    "phone": "string"
+                }
+
+                Ejemplo de Salida Esperada:
+                {
+                    "name": "Leifer",
+                    "type": "cda",
+                    "plate": "ABC123A",
+                    "startDate": "2024/02/15 00:00",
+                    "phone": "573000000000"
+                }
+
+                Nota Importante:  
+                Solo devuelve el objeto JSON final. No incluyas texto explicativo ni comillas adicionales.`
 
     return prompt
 }
@@ -54,8 +71,8 @@ const flowConfirmTechno = addKeyword(EVENTS.ACTION).addAction(async (ctx, { flow
             role: 'system',
             content: generatePromptToFormatDate(history)
         }
-    ], 'gpt-4')
-
+    ], 'qwen-max')
+    console.log('text in confirm', text)
     await handleHistory({ content: text, role: 'assistant' }, state)
     await flowDynamic(`¿Me confirmas fecha y hora?: ${formatDate(text)}`)
     await state.update({ startDate: text })
@@ -75,9 +92,10 @@ const flowConfirmTechno = addKeyword(EVENTS.ACTION).addAction(async (ctx, { flow
                 content: generateJsonParse(infoCustomer)
             }
         ])
-
+        console.log('text in confirm 78', text)
         await appToCalendarTechno(text)
         await flowDynamic(`muy bien ${currentState.name}, tu cita a sido agendada para ${formatDate(currentState.startDate)}`)
+        console.log('text in confirm 78', text)
         clearHistory(state)
         flowDynamic("¿te puedo ayudar con algo mas?")
         state.update({
