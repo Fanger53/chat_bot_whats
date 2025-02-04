@@ -52,8 +52,8 @@ export const generatePromptSeller = (history: string, nombre: string, body: stri
  */
 const flowSeller = addKeyword(EVENTS.ACTION).addAction(async (ctx, { state, flowDynamic, extensions, gotoFlow }) => {
     const currentState = state.getMyState() || {};
-    reset(ctx, gotoFlow, 360000)
-    resetPrevious(ctx, 180000, flowDynamic, currentState.userName)
+    // reset(ctx, gotoFlow, 360000)
+    // resetPrevious(ctx, 180000, flowDynamic, currentState.userName)
     console.log(currentState.flag)
     if(currentState.flag === true){
         return ""
