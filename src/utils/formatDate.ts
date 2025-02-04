@@ -1,4 +1,4 @@
-import { format, parse } from 'date-fns';
+import { format, parse, isValid } from 'date-fns';
 import { es } from 'date-fns/locale';
 
 const formatDate = (dateString: string): string => {
@@ -17,6 +17,11 @@ const formatDate = (dateString: string): string => {
             correctedDateString = dateString.replace(/\/(?=\d{2}:\d{2}$)/, ' ');
             // Parse the input date string in 24-hour format
             parsedDate = parse(correctedDateString, 'yyyy / MM / dd / HH:mm', new Date());
+        }
+
+        // Check if the parsed date is valid
+        if (!isValid(parsedDate)) {
+            throw new Error('Invalid date');
         }
 
         // Format the date to the desired output format
