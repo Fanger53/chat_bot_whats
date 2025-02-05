@@ -1,6 +1,5 @@
 import {addAnswer, addKeyword, EVENTS } from "@bot-whatsapp/bot";
-import welcomeFlow from "../../welcome.flow";
-import { stopPrevious } from "src/utils/idleCustom";
+import { stopPrevious } from "../../../utils/idleCustom.js";
 
 const flowFinal = addKeyword(EVENTS.ACTION)
     .addAction(

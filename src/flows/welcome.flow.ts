@@ -1,11 +1,11 @@
 import { EVENTS, addKeyword } from "@bot-whatsapp/bot";
-import conversationalLayer from "src/layers/conversational.layer";
-import mainLayer from "src/layers/main.layer";
-import getUserInfo from "src/services/endpoints/userInformationService";
-import { flowBirthday } from "./flowHelpers/birthday/birthday.flow";
-import { flowTecno } from "./tecno.flow";
-import { stop, stopPrevious } from "src/utils/idleCustom";
-import checkTecnoMatch from "src/utils/checkTecnoMatch";
+import conversationalLayer from "../layers/conversational.layer.js";
+import mainLayer from "../layers/main.layer.js";
+import getUserInfo from "../services/endpoints/userInformationService.js";
+import { flowBirthday } from "./flowHelpers/birthday/birthday.flow.js";
+import { flowTecno } from "./tecno.flow.js";
+import { stop, stopPrevious } from "../utils/idleCustom.js";
+import checkTecnoMatch from "../utils/checkTecnoMatch.js";
 
 const welcome_flow_default = addKeyword(EVENTS.WELCOME).addAction(async (ctx, { gotoFlow, state, flowDynamic }) => {
     console.log("flowWelcome");

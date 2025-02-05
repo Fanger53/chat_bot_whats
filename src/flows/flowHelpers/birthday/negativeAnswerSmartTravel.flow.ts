@@ -1,7 +1,6 @@
 import { addKeyword, EVENTS } from "@bot-whatsapp/bot";
-import AIClass from "src/services/ai";
-import { handleHistory } from "src/utils/handleHistory";
-import { reset, resetPrevious, stopPrevious } from "src/utils/idleCustom";
+import AIClass from "../../../services/ai/index.js";
+import { reset, resetPrevious, stopPrevious } from "../../../utils/idleCustom.js";
 
 const flowNegativeAnswerSmartTravel = addKeyword(EVENTS.ACTION)
     .addAction(async (ctx, { flowDynamic, state, gotoFlow }) => {

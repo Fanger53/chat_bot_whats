@@ -1,5 +1,5 @@
-import { getFullCurrentDate } from "src/utils/currentDate";
-const generaInfo = (nombre:string, history:string, inputUser:string) => {
+import { getFullCurrentDate } from "./currentDate.js";
+const generalInfo = (nombre:string, history:string, inputUser:string) => {
     const prompt = ` Eres una asistente de motosmart actua asi FECHA DE HOY: ${getFullCurrentDate()}
 usa esta informacion de motomart 
 Hola, bienvenido a MotoSmart 🛵 ¿En qué puedo ayudarte el día de hoy?
@@ -35,4 +35,4 @@ Respuesta útil:`
 return prompt
 }
 
-export default generaInfo;
+export default generalInfo;

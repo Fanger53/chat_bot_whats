@@ -1,10 +1,10 @@
 import { addKeyword, EVENTS } from "@bot-whatsapp/bot";
-import AIClass from "../../../services/ai";
-import { getHistoryParse, handleHistory } from "../../../utils/handleHistory";
-import { generateTimer } from "../../../utils/generateTimer";
-import { getCurrentCalendar } from "../../../services/calendar";
-import { getFullCurrentDate } from "src/utils/currentDate";
-import { reset, resetPrevious } from "src/utils/idleCustom";
+import AIClass from "../../../services/ai/index.js";
+import { getHistoryParse, handleHistory } from "../../../utils/handleHistory.js";
+import { generateTimer } from "../../../utils/generateTimer.js";
+import { getCurrentCalendar } from "../../../services/calendar/index.js";
+import { getFullCurrentDate } from "../../../utils/currentDate.js";
+import { reset, resetPrevious } from "../../../utils/idleCustom.js";
 
 const generateSchedulePrompt = (schedule: string, history: string, suggestedTimes: string[]) => {
     const currentDay = getFullCurrentDate();

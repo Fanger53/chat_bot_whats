@@ -1,13 +1,9 @@
 import { addKeyword, EVENTS } from "@bot-whatsapp/bot";
-import postPoints from "src/services/endpoints/postPoints";
-import getUserInfo from "src/services/endpoints/userInformationService";
-import AIClass from "src/services/ai";
-import { flowSeller } from "src/flows/seller.flow";
-import { handleHistory } from "src/utils/handleHistory";
-import { flowSchedule } from "src/flows/schedule.flow";
-import { flowScheduleTechno } from "./scheduleTechno.flow";
-import { reset, resetPrevious } from "src/utils/idleCustom";
-import flowFinal from "../birthday/final.flow";
+import AIClass from "../../../services/ai/index.js";
+import { handleHistory } from "../../../utils/handleHistory.js";
+import { flowScheduleTechno } from "./scheduleTechno.flow.js";
+import { reset, resetPrevious } from "../../../utils/idleCustom.js";
+import flowFinal from "../birthday/final.flow.js";
 
 
 const flowMiddleTechno = addKeyword(EVENTS.ACTION)

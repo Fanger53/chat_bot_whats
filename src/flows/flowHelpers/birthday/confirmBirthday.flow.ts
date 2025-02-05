@@ -1,11 +1,11 @@
 import { addKeyword, EVENTS } from "@bot-whatsapp/bot";
-import AIClass from "../../../services/ai";
-import { clearHistory, handleHistory, getHistoryParse } from "../../../utils/handleHistory";
-import { getFullCurrentDate } from "../../../utils/currentDate";
-import { appToCalendarTechno } from "src/services/calendar/techno";
-import { reset, resetPrevious, stop, stopPrevious } from "src/utils/idleCustom";
-import formatDate from "src/utils/formatDate";
-import { sendMessage } from "src/services/endpoints/whatsappSendMessage";
+import AIClass from "../../../services/ai/index.js";
+import { clearHistory, handleHistory, getHistoryParse } from "../../../utils/handleHistory.js";
+import { getFullCurrentDate } from "../../../utils/currentDate.js";
+import { appToCalendarTechno } from "../../../services/calendar/techno.js";
+import { reset, resetPrevious, stop, stopPrevious } from "../../../utils/idleCustom.js";
+import formatDate from "../../../utils/formatDate.js";
+import { sendMessage } from "../../../services/endpoints/whatsappSendMessage.js";
 
 const generatePromptToFormatDate = (history: string) => {
     const prompt = `Fecha de Hoy:${getFullCurrentDate()}, Basado en el Historial de conversacion: 

@@ -1,14 +1,13 @@
 import { BotContext, BotMethods } from "@bot-whatsapp/bot/dist/types"
-import { getHistoryParse } from "../utils/handleHistory"
-import AIClass from "../services/ai"
-import { flowSeller } from "../flows/seller.flow"
-import { flowSchedule } from "../flows/schedule.flow"
-import { flowConfirm } from "../flows/confirm.flow"
-import { flowBirthday } from "src/flows/flowHelpers/birthday/birthday.flow"
-import { flowScheduleTechno } from "src/flows/flowHelpers/tecno/scheduleTechno.flow"
-import { flowConfirmTechno } from "src/flows/flowHelpers/tecno/confirmTechno.flow"
-import { flowScheduleBirthday } from "src/flows/flowHelpers/birthday/scheduleBirthday.flow"
-import { flowConfirmBirthday } from "src/flows/flowHelpers/birthday/confirmBirthday.flow"
+import { getHistoryParse } from "../utils/handleHistory.js"
+import AIClass from "../services/ai/index.js"
+import { flowSeller } from "../flows/seller.flow.js"
+import { flowSchedule } from "../flows/schedule.flow.js"
+import { flowConfirm } from "../flows/confirm.flow.js"
+import { flowScheduleTechno } from "../flows/flowHelpers/tecno/scheduleTechno.flow.js"
+import { flowConfirmTechno } from "../flows/flowHelpers/tecno/confirmTechno.flow.js"
+import { flowScheduleBirthday } from "../flows/flowHelpers/birthday/scheduleBirthday.flow.js"
+import { flowConfirmBirthday } from "../flows/flowHelpers/birthday/confirmBirthday.flow.js"
 
 /**
  * Determina que flujo va a iniciarse basado en el historial que previo entre el bot y el humano

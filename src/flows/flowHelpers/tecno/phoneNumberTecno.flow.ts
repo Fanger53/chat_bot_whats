@@ -1,8 +1,8 @@
 import { addKeyword, EVENTS } from "@bot-whatsapp/bot";
-import getUserInfo from "src/services/endpoints/userInformationService";
-import flowDownloadApp from "../birthday/downloadApp.flow";
-import flowMiddleTechno from "./middleTecno.flow";
-import { reset, resetPrevious } from "src/utils/idleCustom";
+import getUserInfo from "../../../services/endpoints/userInformationService.js";
+import flowDownloadApp from "../birthday/downloadApp.flow.js";
+import flowMiddleTechno from "./middleTecno.flow.js";
+import { reset, resetPrevious } from "../../../utils/idleCustom.js";
 
 
 const array = []

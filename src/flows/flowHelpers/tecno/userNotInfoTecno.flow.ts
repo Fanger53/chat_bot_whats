@@ -1,8 +1,7 @@
 import { addKeyword, EVENTS } from "@bot-whatsapp/bot";
-import getUserInfo from "src/services/endpoints/userInformationService";
-import AIClass from "src/services/ai";
-import flowPhoneNumberTecno from "./phoneNumberTecno.flow";
-import { reset, resetPrevious } from "src/utils/idleCustom";
+import AIClass from "../../../services/ai/index.js";
+import flowPhoneNumberTecno from "./phoneNumberTecno.flow.js";
+import { reset, resetPrevious } from "../../../utils/idleCustom.js";
 
 const flowUserNotInfoTecno = addKeyword(EVENTS.ACTION)
     .addAction( async (ctx, { flowDynamic, state, extensions, gotoFlow }) => {

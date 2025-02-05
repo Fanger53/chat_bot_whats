@@ -1,6 +1,6 @@
 import { addKeyword, EVENTS } from "@bot-whatsapp/bot";
 import { BotContext, TFlow } from "@bot-whatsapp/bot/dist/types"
-import { clearHistory } from "./handleHistory";
+import { clearHistory } from "./handleHistory.js";
 
 // Object to store timers for each user
 const timers = {};

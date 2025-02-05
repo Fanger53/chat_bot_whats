@@ -1,5 +1,5 @@
 import { addKeyword, EVENTS } from "@bot-whatsapp/bot";
-import { stopPrevious } from "src/utils/idleCustom";
+import { stopPrevious } from "../../../utils/idleCustom.js";
 
 const flowDownloadApp = addKeyword(EVENTS.ACTION)
     .addAction(async (ctx, { flowDynamic, state }) => {

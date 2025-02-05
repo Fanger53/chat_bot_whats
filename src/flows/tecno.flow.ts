@@ -1,8 +1,8 @@
 import { addKeyword, EVENTS } from "@bot-whatsapp/bot";
-import getUserInfo from "../services/endpoints/userInformationService";
-import { start, startPrevious } from "src/utils/idleCustom";
-import flowUserWithInfoTecno from "./flowHelpers/tecno/userWithInfoTecno.flow";
-import flowUserNotInfoTecno from "./flowHelpers/tecno/userNotInfoTecno.flow";
+import getUserInfo from "../services/endpoints/userInformationService.js";
+import { start, startPrevious } from "../utils/idleCustom.js";
+import flowUserWithInfoTecno from "./flowHelpers/tecno/userWithInfoTecno.flow.js";
+import flowUserNotInfoTecno from "./flowHelpers/tecno/userNotInfoTecno.flow.js";
 
 
 const flowTecno = addKeyword(EVENTS.ACTION)

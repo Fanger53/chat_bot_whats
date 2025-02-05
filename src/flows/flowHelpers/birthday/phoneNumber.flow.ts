@@ -1,8 +1,8 @@
 import { addKeyword, EVENTS } from "@bot-whatsapp/bot";
-import getUserInfo from "src/services/endpoints/userInformationService";
-import flowGivePoints from "./givePoints.flow";
-import flowDownloadApp from "./downloadApp.flow";
-import { reset, resetPrevious } from "src/utils/idleCustom";
+import getUserInfo from "../../../services/endpoints/userInformationService.js";
+import flowGivePoints from "./givePoints.flow.js";
+import flowDownloadApp from "./downloadApp.flow.js";
+import { reset, resetPrevious } from "../../../utils/idleCustom.js";
 
 const array = []
 const flowPhoneNumber = addKeyword(EVENTS.ACTION)

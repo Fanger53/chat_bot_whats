@@ -1,11 +1,7 @@
 import { addKeyword, EVENTS } from "@bot-whatsapp/bot";
-import postPoints from "src/services/endpoints/postPoints";
-import getUserInfo from "src/services/endpoints/userInformationService";
-import AIClass from "src/services/ai";
-import flowFinal from "./final.flow";
-import flowSmartTravel from "./smartTravel.flow";
-import flowInTheMiddle from "./middle.flow";
-import { reset, resetPrevious } from "src/utils/idleCustom";
+import AIClass from "../../../services/ai/index.js";
+import flowInTheMiddle from "./middle.flow.js";
+import { reset, resetPrevious } from "../../../utils/idleCustom.js";
 
 
 const flowUserWithInfo = addKeyword(EVENTS.ACTION)

@@ -1,9 +1,9 @@
 import { addKeyword, EVENTS } from "@bot-whatsapp/bot";
-import { flowSeller } from "src/flows/seller.flow";
-import AIClass from "src/services/ai";
-import flowNegativeAnswerSmartTravel from "./negativeAnswerSmartTravel.flow";
-import { handleHistory } from "src/utils/handleHistory";
-import { reset, resetPrevious, stopPrevious } from "src/utils/idleCustom";
+import { flowSeller } from "../../../flows/seller.flow.js";
+import AIClass from "../../../services/ai/index.js";
+import flowNegativeAnswerSmartTravel from "./negativeAnswerSmartTravel.flow.js";
+import { handleHistory } from "../../../utils/handleHistory.js";
+import { reset, resetPrevious, stopPrevious } from "../../../utils/idleCustom.js";
 
 const flowSmartTravel = addKeyword(EVENTS.ACTION)
     .addAction( async (ctx, { flowDynamic, state, gotoFlow }) => {

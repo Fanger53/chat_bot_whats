@@ -1,5 +1,5 @@
 import { BotContext, BotMethods } from "@bot-whatsapp/bot/dist/types";
-import { handleHistory } from "../utils/handleHistory";
+import { handleHistory } from "../utils/handleHistory.js";
 
 /**
  * Su funcion es almancenar en el state todos los mensajes que el usuario  escriba

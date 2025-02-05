@@ -1,12 +1,8 @@
 import { addKeyword, EVENTS } from "@bot-whatsapp/bot";
-import AIClass from "src/services/ai";
-import { handleHistory } from "src/utils/handleHistory";
-import { flowScheduleTechno } from "./scheduleTechno.flow";
-import { startPrevious, reset, start, resetPrevious } from "src/utils/idleCustom";
-import { delay } from "@bot-whatsapp/bot/dist/utils";
-// import flowFinal from "./final.flow";
-// import flowSmartTravel from "./smartTravel.flow";
-// import flowInTheMiddle from "./middle.flow";
+import AIClass from "../../../services/ai/index.js";
+import { handleHistory } from "../../../utils/handleHistory.js";
+import { flowScheduleTechno } from "./scheduleTechno.flow.js";
+import { startPrevious, reset, start, resetPrevious } from "../../../utils/idleCustom.js";
 
 
 const flowUserWithInfoTecno = addKeyword(EVENTS.ACTION)

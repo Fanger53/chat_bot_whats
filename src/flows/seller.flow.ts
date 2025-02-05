@@ -1,11 +1,9 @@
 import { addKeyword, EVENTS } from "@bot-whatsapp/bot";
-import { generateTimer } from "../utils/generateTimer";
-import { getHistoryParse, handleHistory } from "../utils/handleHistory";
-import AIClass from "../services/ai";
-import { getFullCurrentDate } from "src/utils/currentDate";
-import getUserInfo from "../services/endpoints/userInformationService"
-import generalInfo from "src/utils/general_info";
-import { reset, resetPrevious } from "src/utils/idleCustom";
+import { generateTimer } from "../utils/generateTimer.js";
+import { getHistoryParse, handleHistory } from "../utils/handleHistory.js";
+import AIClass from "../services/ai/index.js";
+import { getFullCurrentDate } from "../utils/currentDate.js";
+import generalInfo from "../utils/general_info.js";
 
 
 const PROMPT_SELLER = `Eres una asistente de motosmart actua asi FECHA DE HOY: {CURRENT_DAY}
