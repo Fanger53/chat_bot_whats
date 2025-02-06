@@ -9,7 +9,8 @@ import checkTecnoMatch from "../utils/checkTecnoMatch.js";
 
 const welcome_flow_default = addKeyword(EVENTS.WELCOME).addAction(async (ctx, { gotoFlow, state, flowDynamic }) => {
     console.log("flowWelcome");
-    const birthdayMessage = "Hola, hoy es mi cumpleaños🎉 y quiero saber mas sobre el obsequio por ser usuario MotoSmart";
+    // const birthdayMessage = "Hola, hoy es mi cumpleaños🎉 y quiero saber mas sobre el obsequio por ser usuario MotoSmart";
+    const birthdayMessage = "sdgshshs";
     const tecnoMessage = "Hola, mi TECNO vence muy pronto ⏱️ puedes darme información sobre cual seria el valor del bono de descuento y los beneficios de sacarla con #MotoSmart";
     const phone = ctx.from;
     console.log("welcomeflow 21", phone);

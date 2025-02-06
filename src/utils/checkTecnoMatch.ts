@@ -8,6 +8,8 @@ const checkTecnoMatch = (input: string): boolean => {
         for (let i = 0; i < word.length; i++) {
             if (target.includes(word[i])) {
                 matchCount++;
+            } else {
+                matchCount = 0; // Reset count if characters are not consecutive
             }
             if (matchCount >= 4) {
                 return true;
