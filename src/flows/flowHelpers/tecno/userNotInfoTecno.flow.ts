@@ -6,8 +6,8 @@ import { reset, resetPrevious } from "../../../utils/idleCustom.js";
 const flowUserNotInfoTecno = addKeyword(EVENTS.ACTION)
     .addAction( async (ctx, { flowDynamic, state, extensions, gotoFlow }) => {
             const currentState = state.getMyState() || {};
-            reset(ctx, gotoFlow, 360000)
-            resetPrevious(ctx, 180000, flowDynamic, currentState.userName)
+            reset(ctx, gotoFlow, 780000)
+            resetPrevious(ctx, 600000, flowDynamic, currentState.userName)
             try {
                 const ai = extensions.ai as AIClass;
                 const prompt = `Genera una pregunta casual y amigable para pedirle el nombre a un usuario.
@@ -58,8 +58,8 @@ const flowUserNotInfoTecno = addKeyword(EVENTS.ACTION)
     .addAction({ capture: true, idle:3000 }, async (ctx, { flowDynamic, state, extensions, gotoFlow }) => {
                 try {
                     const currentState = state.getMyState() || {};
-                    reset(ctx, gotoFlow, 360000)
-                    resetPrevious(ctx, 180000, flowDynamic, currentState.userName)
+                    reset(ctx, gotoFlow, 780000)
+                    resetPrevious(ctx, 600000, flowDynamic, currentState.userName)
                     const userInput = ctx.body;
                     const ai = extensions.ai as AIClass;
                     const prompt = `Extrae el nombre de la siguiente frase o palabra: "${userInput}" el contexto es que esto es el input del user y es el nombre "${userInput}" el nombre del usuario este es el contexto "me llamo ${userInput}"

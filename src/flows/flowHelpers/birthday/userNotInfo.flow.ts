@@ -7,8 +7,8 @@ const flowUserNotInfo = addKeyword(EVENTS.ACTION)
     .addAction( async (ctx, { flowDynamic, state, extensions, gotoFlow }) => {
             console.log('flowUserNotInfo')
             const currentState = state.getMyState() || {};
-            reset(ctx, gotoFlow, 360000)
-            resetPrevious(ctx, 180000, flowDynamic, currentState.userName)
+            reset(ctx, gotoFlow, 780000)
+            resetPrevious(ctx, 600000, flowDynamic, currentState.userName)
             try {
                 const ai = extensions.ai as AIClass;
                 const prompt = `Genera una pregunta casual y amigable para pedirle el nombre a un usuario.
@@ -59,8 +59,8 @@ const flowUserNotInfo = addKeyword(EVENTS.ACTION)
     .addAction({ capture: true, idle:30000 }, async (ctx, { flowDynamic, state, extensions, gotoFlow }) => {
                 try {
                     const currentState = state.getMyState() || {};
-                    reset(ctx, gotoFlow, 360000)
-                    resetPrevious(ctx, 180000, flowDynamic, currentState.userName)
+                    reset(ctx, gotoFlow, 780000)
+                    resetPrevious(ctx, 600000, flowDynamic, currentState.userName)
                     const userInput = ctx.body;
                     const ai = extensions.ai as AIClass;
                     const prompt = `Extrae el nombre de la siguiente frase o palabra: "${userInput}"

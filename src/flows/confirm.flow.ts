@@ -40,8 +40,8 @@ const generateJsonParse = (info: string) => {
 const flowConfirm = addKeyword(EVENTS.ACTION).addAction(async (ctx, { flowDynamic, state, gotoFlow }) => {
     console.log("flowConfirm")
     const currentState = state.getMyState() || {};
-    reset(ctx, gotoFlow, 360000)
-    resetPrevious(ctx, 180000, flowDynamic, currentState.userName)
+    reset(ctx, gotoFlow, 780000)
+    resetPrevious(ctx, 600000, flowDynamic, currentState.userName)
     await flowDynamic('Ok, voy a pedirte unos datos para agendar')
     await flowDynamic('¿Cual es tu nombre?')
 }).addAction({ capture: true }, async (ctx, { state, flowDynamic, extensions }) => {

@@ -55,11 +55,10 @@ const generateJsonParse = (info: string) => {
  * Encargado de pedir los datos necesarios para registrar el evento en el calendario
  */
 const flowConfirmTechno = addKeyword(EVENTS.ACTION).addAction(async (ctx, { flowDynamic, gotoFlow, state }) => {
-    reset(ctx, gotoFlow, 90000)
     console.log("flowConfirmTechno")
     const currentState = state.getMyState() || {};
-    reset(ctx, gotoFlow, 360000)
-    resetPrevious(ctx, 180000, flowDynamic, currentState.userName)
+    reset(ctx, gotoFlow, 780000)
+    resetPrevious(ctx, 600000, flowDynamic, currentState.userName)
     await flowDynamic('Ok, voy a pedirte unos datos para agendar')
     await flowDynamic('¿Cual es tu nombre completo?')
 }).addAction({ capture: true }, async (ctx, { state, flowDynamic, extensions }) => {

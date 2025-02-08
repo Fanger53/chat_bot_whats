@@ -39,8 +39,7 @@ export default async (_: BotContext, { state, gotoFlow, extensions }: BotMethods
         }
     ])
 
-    console.log("confirmar:", (text.includes('CONFIRMAR')))
-    console.log("flag_shedule techno:", currentState.scheduleTechno)
+    console.log("text:", (text.includes('HABLAR')))
     if (text.includes('HABLAR')) return gotoFlow(flowSeller)
 
     console.log("shedule techno:", currentState.scheduleTechno)
@@ -60,11 +59,4 @@ export default async (_: BotContext, { state, gotoFlow, extensions }: BotMethods
         
     if ((text.includes('CONFIRMAR') && currentState.scheduleTechno === false) || (text.includes('AGENDAR') && currentState.scheduleBirthday === false)) return gotoFlow(flowConfirm)
         console.log('linea 46')
-    // console.log(text.includes('CUMPLEAÑOS linea 47'))
-    // if (text.includes('CUMPLEAÑOS')) {
-    //     state.update({ 
-    //         flag:true
-    //     });
-    //     return gotoFlow(flowBirthday)
-    // }
 }

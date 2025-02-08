@@ -53,8 +53,8 @@ const flowScheduleTechno = addKeyword(EVENTS.ACTION).addAction(async (ctx, { ext
         console.log('flowScheduleTechno');
         const currentState = state.getMyState() || {};
         console.log(currentState);
-        reset(ctx, gotoFlow, 360000);
-        resetPrevious(ctx, 180000, flowDynamic, currentState.userName);
+        reset(ctx, gotoFlow, 780000)
+        resetPrevious(ctx, 600000, flowDynamic, currentState.userName)
 
         if (currentState.birthday === true) {
             return console.log("no sigue el flujo");

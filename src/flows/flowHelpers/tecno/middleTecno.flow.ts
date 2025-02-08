@@ -11,8 +11,8 @@ const flowMiddleTechno = addKeyword(EVENTS.ACTION)
         try {
             console.log('flowMiddleTechno');
             const currentState = state.getMyState() || {};
-            reset(ctx, gotoFlow, 360000)
-            resetPrevious(ctx, 180000, flowDynamic, currentState.userName)
+            reset(ctx, gotoFlow, 780000)
+            resetPrevious(ctx, 600000, flowDynamic, currentState.userName)
             if (currentState && currentState.userName !== "") {
                 await flowDynamic([
                     {
@@ -33,8 +33,8 @@ const flowMiddleTechno = addKeyword(EVENTS.ACTION)
     .addAction( async (ctx, { flowDynamic, state, gotoFlow}) => {
             try {
                 const currentState = state.getMyState() || {};
-                reset(ctx, gotoFlow, 360000)
-                resetPrevious(ctx, 180000, flowDynamic, currentState.userName)
+                reset(ctx, gotoFlow, 780000)
+                resetPrevious(ctx, 600000, flowDynamic, currentState.userName)
                 if (currentState && currentState.userName !== "") {
                     await flowDynamic([
                         {
@@ -91,7 +91,7 @@ const flowMiddleTechno = addKeyword(EVENTS.ACTION)
 
                     Recuerda exigirle al aliado que escanee tu código QR para que puedas recibir el descuento de $${currentState.is_premium ? "25.000" : "15000"} pesos y sumar 5000 MotoPuntos de obsequio por usar nuestras alianzas.
 
-                    Nuestro aliado tiene atención de 8am a 5pm de lunes a sábado" `;
+                    Nuestro aliado tiene atención de 8am a 5pm de lunes a sábado" y por ultimo no respondas con una pregunta`;
 
                     const response = await ai.createChat([
                         {

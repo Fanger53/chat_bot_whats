@@ -6,8 +6,8 @@ const flowNegativeAnswerSmartTravel = addKeyword(EVENTS.ACTION)
     .addAction(async (ctx, { flowDynamic, state, gotoFlow }) => {
         try {
             const currentState = state.getMyState() || {};
-            reset(ctx, gotoFlow, 360000)
-            resetPrevious(ctx, 180000, flowDynamic, currentState.userName)
+            reset(ctx, gotoFlow, 780000)
+            resetPrevious(ctx, 600000, flowDynamic, currentState.userName)
             console.log('flowNegativeAnswerSmartTravel')
             await flowDynamic([
                 {
@@ -29,8 +29,8 @@ const flowNegativeAnswerSmartTravel = addKeyword(EVENTS.ACTION)
     .addAction({ capture: true}, async (ctx, { flowDynamic, state, gotoFlow, extensions }) => {
         try {
             const currentState = state.getMyState() || {};
-            reset(ctx, gotoFlow, 360000)
-            resetPrevious(ctx, 180000, flowDynamic, currentState.userName)
+            reset(ctx, gotoFlow, 780000)
+            resetPrevious(ctx, 600000, flowDynamic, currentState.userName)
             const userMessage = ctx.body.toLowerCase();
             const ai = extensions.ai as AIClass;
             const prompt = `Analiza la siguiente respuesta del usuario: "${userMessage} bajo el contexto de que la respuesta es de esta pregunta ¿te puedo ayudar con algo mas?"

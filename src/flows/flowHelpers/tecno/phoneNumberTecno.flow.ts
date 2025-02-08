@@ -10,8 +10,8 @@ const flowPhoneNumberTecno = addKeyword(EVENTS.ACTION)
     .addAction({capture: true},async (ctx, { state, gotoFlow, flowDynamic }) => {
         try {
             const currentState = state.getMyState() || {};
-            reset(ctx, gotoFlow, 360000)
-            resetPrevious(ctx, 180000, flowDynamic, currentState.userName)
+            reset(ctx, gotoFlow, 780000)
+            resetPrevious(ctx, 600000, flowDynamic, currentState.userName)
             console.log("flowPhoneNumberTecno")
             const phone = ctx.body
             console.log(phone)

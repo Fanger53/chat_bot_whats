@@ -6,11 +6,10 @@ import { reset, resetPrevious } from "../../../utils/idleCustom.js";
 const flowGivePoints = addKeyword(EVENTS.ACTION)
     .addAction(async (ctx, { flowDynamic, state, gotoFlow }) => {
         try {
-            reset(ctx, gotoFlow, 90000)
             console.log('flowGivePoints')
             const currentState = state.getMyState() || {};
-            reset(ctx, gotoFlow, 360000)
-            resetPrevious(ctx, 180000, flowDynamic, currentState.userName)
+            reset(ctx, gotoFlow, 780000)
+            resetPrevious(ctx, 600000, flowDynamic, currentState.userName)
             
             if (currentState && currentState.userName !== "") {
                 await flowDynamic([
@@ -66,11 +65,10 @@ const flowGivePoints = addKeyword(EVENTS.ACTION)
             }
         )
         .addAction({ capture: true }, async (ctx, { flowDynamic, state, extensions, gotoFlow }) => {
-            reset(ctx, gotoFlow, 90000)
             try {
                 const currentState = state.getMyState() || {};
-                reset(ctx, gotoFlow, 360000)
-                resetPrevious(ctx, 180000, flowDynamic, currentState.userName)
+                reset(ctx, gotoFlow, 780000)
+                resetPrevious(ctx, 600000, flowDynamic, currentState.userName)
                 const body = ctx.body
                 const ai = extensions.ai as AIClass;
                 const prompt = `toma esto ${body} como contexto y el usuario está de cumpleaños. Ya lo hemos felicitado y saludado antes. 

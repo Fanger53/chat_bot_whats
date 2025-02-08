@@ -44,8 +44,8 @@ const generateSchedulePrompt = (schedule: string, history: string) => {
 const flowSchedule = addKeyword(EVENTS.ACTION).addAction(async (ctx, { extensions, state, flowDynamic, gotoFlow }) => {
     console.log("flow agendar")
     const currentState = state.getMyState() || {};
-    reset(ctx, gotoFlow, 360000)
-    resetPrevious(ctx, 180000, flowDynamic, currentState.userName)
+    reset(ctx, gotoFlow, 780000)
+    resetPrevious(ctx, 600000, flowDynamic, currentState.userName)
     if(currentState.birthday === true){
         return ""
     }

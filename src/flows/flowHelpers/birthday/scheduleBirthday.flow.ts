@@ -45,8 +45,8 @@ const flowScheduleBirthday = addKeyword(EVENTS.ACTION).addAction(async (ctx, { e
     console.log('flowScheduleBirthday')
     const currentState = state.getMyState() || {};
     console.log(currentState)
-    reset(ctx, gotoFlow, 360000)
-    resetPrevious(ctx, 180000, flowDynamic, currentState.userName)
+    reset(ctx, gotoFlow, 780000)
+    resetPrevious(ctx, 600000, flowDynamic, currentState.userName)
     if(currentState.birthday === true){
         return ""
     }

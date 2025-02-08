@@ -49,8 +49,8 @@ const generateSchedulePrompt = (summary: string, history: string) => {
 const flowInTheMiddle = addKeyword(EVENTS.ACTION)
 .addAction(async (ctx, { flowDynamic, state, gotoFlow }) => {
     const currentState = state.getMyState() || {};
-    reset(ctx, gotoFlow, 360000)
-    resetPrevious(ctx, 180000, flowDynamic, currentState.userName)
+    reset(ctx, gotoFlow, 780000)
+    resetPrevious(ctx, 600000, flowDynamic, currentState.userName)
     try {
         const currentState = state.getMyState()
         await flowDynamic([
@@ -70,8 +70,8 @@ const flowInTheMiddle = addKeyword(EVENTS.ACTION)
 .addAction({ capture: true }, async (ctx, { flowDynamic, state, gotoFlow, extensions }) => {
         try {
             const currentState = state.getMyState() || {};
-            reset(ctx, gotoFlow, 360000)
-            resetPrevious(ctx, 180000, flowDynamic, currentState.userName)
+            reset(ctx, gotoFlow, 780000)
+            resetPrevious(ctx, 600000, flowDynamic, currentState.userName)
             const body = ctx.body
             const ai = extensions.ai as AIClass;
             const prompt = `Actúa como un agente amigable y responde al contexto: "${body}".
@@ -116,8 +116,8 @@ const flowInTheMiddle = addKeyword(EVENTS.ACTION)
 .addAction({ capture: true }, async (ctx, { flowDynamic, state, gotoFlow, extensions }) => {
             try {
                 const currentState = state.getMyState() || {};
-                reset(ctx, gotoFlow, 360000)
-                resetPrevious(ctx, 180000, flowDynamic, currentState.userName)
+                reset(ctx, gotoFlow, 780000)
+                resetPrevious(ctx, 600000, flowDynamic, currentState.userName)
                 
                 const userMessage = ctx.body.toLowerCase();
                 const ai = extensions.ai as AIClass;
@@ -193,8 +193,8 @@ const flowInTheMiddle = addKeyword(EVENTS.ACTION)
     .addAction({ capture: true}, async (ctx, { flowDynamic, state, gotoFlow, extensions }) => {
             try {
                 const currentState = state.getMyState() || {};
-                reset(ctx, gotoFlow, 360000)
-                resetPrevious(ctx, 180000, flowDynamic, currentState.userName)
+                reset(ctx, gotoFlow, 780000)
+                resetPrevious(ctx, 600000, flowDynamic, currentState.userName)
                 const userMessage = ctx.body.toLowerCase();
                 const ai = extensions.ai as AIClass;
                 console.log('flow in the midle 116')

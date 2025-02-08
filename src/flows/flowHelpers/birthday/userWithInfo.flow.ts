@@ -9,8 +9,8 @@ const flowUserWithInfo = addKeyword(EVENTS.ACTION)
         try {
             console.log('flowUserWithInfo');
             const currentState = state.getMyState() || {};
-            reset(ctx, gotoFlow, 360000)
-            resetPrevious(ctx, 180000, flowDynamic, currentState.userName)
+            reset(ctx, gotoFlow, 780000)
+            resetPrevious(ctx, 600000, flowDynamic, currentState.userName)
             if (currentState && currentState.userName !== "") {
                 await flowDynamic([
                     {
@@ -39,8 +39,8 @@ const flowUserWithInfo = addKeyword(EVENTS.ACTION)
     })
     .addAction( async (ctx, { flowDynamic, state, extensions, gotoFlow}) => {
                 const currentState = state.getMyState() || {};
-                reset(ctx, gotoFlow, 360000)
-                resetPrevious(ctx, 180000, flowDynamic, currentState.userName)
+                reset(ctx, gotoFlow, 780000)
+                resetPrevious(ctx, 600000, flowDynamic, currentState.userName)
                 try { 
                     const currentState = state.getMyState()
                     const ai = extensions.ai as AIClass;
@@ -80,8 +80,8 @@ const flowUserWithInfo = addKeyword(EVENTS.ACTION)
         .addAction({ capture:true}, async (ctx, { flowDynamic, state, extensions, gotoFlow }) => {          
             try {
                 const currentState = state.getMyState() || {};
-                reset(ctx, gotoFlow, 360000)
-                resetPrevious(ctx, 180000, flowDynamic, currentState.userName)
+                reset(ctx, gotoFlow, 780000)
+                resetPrevious(ctx, 600000, flowDynamic, currentState.userName)
                 const body = ctx.body
                 const ai = extensions.ai as AIClass;
                 const prompt = `toma esto ${body} como contexto y el usuario está de cumpleaños. Ya lo hemos felicitado y saludado antes. 

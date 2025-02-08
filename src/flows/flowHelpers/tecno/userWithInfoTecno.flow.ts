@@ -34,8 +34,8 @@ const flowUserWithInfoTecno = addKeyword(EVENTS.ACTION)
                 }
             ]);
             const currentState = state.getMyState() || {};
-            reset(ctx, gotoFlow, 360000)
-            resetPrevious(ctx, 180000, flowDynamic, currentState.userName)
+            reset(ctx, gotoFlow, 780000)
+            resetPrevious(ctx, 600000, flowDynamic, currentState.userName)
             console.log('flowUserWithInfoTecno');
 
             if (currentState && currentState.userName !== "") {
@@ -66,8 +66,8 @@ const flowUserWithInfoTecno = addKeyword(EVENTS.ACTION)
     .addAction({ capture: true},async (ctx, { flowDynamic, state, gotoFlow, extensions}) => {
         try {
             const currentState = state.getMyState() || {};
-            reset(ctx, gotoFlow, 360000)
-            resetPrevious(ctx, 180000, flowDynamic, currentState.userName)
+            reset(ctx, gotoFlow, 780000)
+            resetPrevious(ctx, 600000, flowDynamic, currentState.userName)
             const body = ctx.body
             const ai = extensions.ai as AIClass;
                 const prompt = `Toma esto "${body}" como contexto y responde de forma positiva.
@@ -110,8 +110,8 @@ const flowUserWithInfoTecno = addKeyword(EVENTS.ACTION)
     .addAction( async (ctx, { flowDynamic, state, extensions, gotoFlow}) => {
             try {
                 const currentState = state.getMyState() || {};
-                reset(ctx, gotoFlow, 360000)
-                resetPrevious(ctx, 180000, flowDynamic, currentState.userName)
+                reset(ctx, gotoFlow, 780000)
+                resetPrevious(ctx, 600000, flowDynamic, currentState.userName)
 
                 if (currentState && currentState.userName !== "") {
                     await flowDynamic([
@@ -159,8 +159,8 @@ const flowUserWithInfoTecno = addKeyword(EVENTS.ACTION)
     .addAction({capture: true}, async (ctx, { flowDynamic, state, gotoFlow, extensions}) => {
         try {
             const currentState = state.getMyState() || {};
-            reset(ctx, gotoFlow, 360000)
-            resetPrevious(ctx, 180000, flowDynamic, currentState.userName)
+            reset(ctx, gotoFlow, 780000)
+            resetPrevious(ctx, 600000, flowDynamic, currentState.userName)
             const body = ctx.body
             const ai = extensions.ai as AIClass;
                 const prompt = `Toma esto "${body}" como contexto y responde a la pregunta: "¿Qué te parecen estos beneficios por hacer parte de la comunidad MotoSmart?". 
@@ -202,10 +202,10 @@ const flowUserWithInfoTecno = addKeyword(EVENTS.ACTION)
     })
     .addAction( { capture: true}, async (ctx, { flowDynamic, state, extensions, gotoFlow}) => {
                 try {
-                    reset(ctx, gotoFlow, 90000)
                     const currentState = state.getMyState();
                     const userMessage = ctx.body
-                    resetPrevious(ctx, 25000, flowDynamic, currentState.userName)
+                    reset(ctx, gotoFlow, 780000)
+                    resetPrevious(ctx, 600000, flowDynamic, currentState.userName)
                     console.log(userMessage)
                     const ai = extensions.ai as AIClass;
                     const prompt = `Analiza la respuesta: ${userMessage} considerando que responde a la pregunta: '¿De qué ciudad o pueblo de Colombia me está hablando?' y que se refiere a ciudades o pueblos colombianos.
@@ -226,7 +226,7 @@ const flowUserWithInfoTecno = addKeyword(EVENTS.ACTION)
 
                     Recuerda exigirle al aliado que escanee tu código QR para que puedas recibir el descuento de $${currentState.is_premium ? "25.000" : "15000"} pesos y sumar 5000 MotoPuntos de obsequio por usar nuestras alianzas.
 
-                    Nuestro aliado tiene atención de 8am a 5pm de lunes a sábado" `;
+                    Nuestro aliado tiene atención de 8am a 5pm de lunes a sábado" por ultimo no respondas con una pregunta`;
 
                     const response = await ai.createChat([
                         {
@@ -258,8 +258,8 @@ const flowUserWithInfoTecno = addKeyword(EVENTS.ACTION)
     .addAction( { capture:true }, async (ctx, { flowDynamic, state, extensions, gotoFlow}) => {
                 try {
                     const currentState = state.getMyState() || {};
-                    reset(ctx, gotoFlow, 360000)
-                    resetPrevious(ctx, 180000, flowDynamic, currentState.userName)
+                    reset(ctx, gotoFlow, 780000)
+                    resetPrevious(ctx, 600000, flowDynamic, currentState.userName)
                     const userMessage = ctx.body.toLowerCase();
                     const ai = extensions.ai as AIClass;
                     const prompt = `Analiza la respuesta del usuario: "${userMessage}" considerando que responde a la pregunta: "¿Te gustaría agendar una cita con nuestro aliado?"
