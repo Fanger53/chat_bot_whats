@@ -41,8 +41,9 @@ const generateSchedulePrompt = (schedule: string, history: string, suggestedTime
     Nota Importante:
     - Solo devuelve una respuesta útil y directa, sin texto adicional ni explicaciones innecesarias.
     - siempre revisa el ${schedule} antes de sugerir una hora para la cita.
+    - no se puede responder a preguntas que no estén relacionadas con la programación de la cita en esta situacion se vuelve a preguntar sobre la hora de la cita.
     IMPRESCINDIBLE:
-    - si el usuario propone una hora fuera de la hora de atncion que es de 9am a 4pm, informale que solo se atiende en ese horario.`;
+    - si el usuario propone una hora fuera de la hora de atencion que es de 9am a 4pm de lunes a viernes, informale que solo se atiende en ese horario.`;
 };
 
 /**
