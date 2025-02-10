@@ -5,7 +5,7 @@ import getUserInfo from "../services/endpoints/userInformationService.js";
 import { flowBirthday } from "./flowHelpers/birthday/birthday.flow.js";
 import { flowTecno } from "./tecno.flow.js";
 import { stop, stopPrevious } from "../utils/idleCustom.js";
-import checkTecnoMatch from "../utils/checkTecnoMatch.js";
+import {checkTecnoMatch, checkBirthMatch} from "../utils/checkMatch.js";
 
 const welcome_flow_default = addKeyword(EVENTS.WELCOME).addAction(async (ctx, { gotoFlow, state, flowDynamic }) => {
     console.log("flowWelcome");
@@ -28,7 +28,7 @@ const welcome_flow_default = addKeyword(EVENTS.WELCOME).addAction(async (ctx, { 
         console.log("techno:", body === tecnoMessage);
         console.log("birthday:", body === birthdayMessage);
 
-        if (body === birthdayMessage) {
+        if (body === birthdayMessage || checkBirthMatch(body)) {
             state.update({ flag: true, scheduleTechno: false });
             return gotoFlow(flowBirthday);
         } else if (body === tecnoMessage || checkTecnoMatch(body)) {
