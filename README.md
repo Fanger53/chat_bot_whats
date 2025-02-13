@@ -1,8 +1,24 @@
-# Base App - Bot de WhatsApp con TypeScript
+# Base App
 
 ## Descripción
-Esta es una aplicación de bot de WhatsApp construida con TypeScript, utilizando diferentes proveedores y plugins para extensibilidad.
 
+Esta es una aplicación de TypeScript que se ejecuta en modo desarrollo dentro de un contenedor Docker.
+
+## Requisitos
+
+- Docker
+- Docker Compose (opcional)
+
+## Instrucciones
+
+### Construir la imagen Docker
+
+Para construir la imagen Docker, ejecuta el siguiente comando en la raíz de tu proyecto:
+
+```sh
+docker build -t base-app-dev .
+```
+docker run -p 3008:3008 base-app-dev
 ## Requisitos Previos
 - Node.js (versión 18 o superior recomendada)
 - pnpm
