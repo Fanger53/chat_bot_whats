@@ -22,9 +22,9 @@ import { flowScheduleTechno } from "./flowHelpers/tecno/scheduleTechno.flow.js";
 import { flowConfirmTechno } from "./flowHelpers/tecno/confirmTechno.flow.js";
 import { flowConfirmBirthday } from "./flowHelpers/birthday/confirmBirthday.flow.js";
 import { idleFlow } from "../utils/idleCustom.js";
-
+import mutedFlow from "./mute.flow.js";
 
 /**
  * Declaramos todos los flujos que vamos a utilizar
  */
-export default createFlow([welcomeFlow, flowSeller, flowSchedule, flowConfirm, flowBirthday, flowGivePoints, flowPhoneNumber, flowUserNotInfo, flowUserWithInfo, flowDownloadApp, flowFinal, flowSmartTravel, flowNegativeAnswerSmartTravel, flowInTheMiddle, flowTecno, flowUserWithInfoTecno, flowUserNotInfoTecno, flowPhoneNumberTecno,  flowMiddleTechno, flowScheduleTechno, flowConfirmTechno, idleFlow, flowConfirmBirthday, flowConfirmBirthday]);
+export default createFlow([welcomeFlow, flowSeller, flowSchedule, flowConfirm, flowBirthday, flowGivePoints, flowPhoneNumber, flowUserNotInfo, flowUserWithInfo, flowDownloadApp, flowFinal, flowSmartTravel, flowNegativeAnswerSmartTravel, flowInTheMiddle, flowTecno, flowUserWithInfoTecno, flowUserNotInfoTecno, flowPhoneNumberTecno,  flowMiddleTechno, flowScheduleTechno, flowConfirmTechno, idleFlow, flowConfirmBirthday, flowConfirmBirthday, mutedFlow]);
