@@ -21,7 +21,7 @@ const checkTecnoMatch = (input: string): boolean => {
 
 
 const checkBirthMatch = (input: string): boolean => {
-    const target = "regalo";
+    const target = "cumpleaños";
     const normalizedInput = input.toLowerCase();
     const words = normalizedInput.split(/\s+/);
 
@@ -33,7 +33,7 @@ const checkBirthMatch = (input: string): boolean => {
             } else {
                 matchCount = 0; // Reset count if characters are not consecutive
             }
-            if (matchCount >= 5) {
+            if (matchCount >= 8) {
                 return true;
             }
         }

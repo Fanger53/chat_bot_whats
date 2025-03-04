@@ -26,7 +26,7 @@ const welcome_flow_default = addKeyword(EVENTS.WELCOME).addAction(async (ctx, { 
         const currentState = state.getMyState() || {};
         const body = ctx.body;
         console.log("techno:", body === tecnoMessage);
-        console.log("birthday:", body === birthdayMessage);
+        console.log("birthday:", checkBirthMatch(body));
 
         if (body === birthdayMessage || checkBirthMatch(body)) {
             state.update({ flag: true, scheduleTechno: false });

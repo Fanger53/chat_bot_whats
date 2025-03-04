@@ -9,7 +9,7 @@ const postPoints = async (phone: string, birthday: string) => {
             birthday: birthday
         };
 
-        const response = await axios.post('https://motosmart.info/api/v1/mautic/added_motopuntos_for_chat', data, {
+        const response = await axios.post('https://motosmart.app/api/v1/mautic/added_motopuntos_for_chat', data, {
             headers: {
                 'Content-Type': 'application/json',
                 'Content-Length': JSON.stringify(data).length.toString()

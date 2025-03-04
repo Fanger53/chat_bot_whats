@@ -7,7 +7,7 @@ import { reset, resetPrevious } from "../../../utils/idleCustom.js";
 const flowUserWithInfo = addKeyword(EVENTS.ACTION)
     .addAction(async (ctx, { flowDynamic, state, gotoFlow, extensions}) => {
         try {
-            console.log('flowUserWithInfo');
+            console.log('flowUserWithInfo birthday');
             const currentState = state.getMyState() || {};
             reset(ctx, gotoFlow, 780000)
             resetPrevious(ctx, 600000, flowDynamic, currentState.userName)
