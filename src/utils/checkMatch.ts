@@ -11,7 +11,7 @@ const checkTecnoMatch = (input: string): boolean => {
             } else {
                 matchCount = 0; // Reset count if characters are not consecutive
             }
-            if (matchCount >= 4) {
+            if (matchCount >= 5) {
                 return true;
             }
         }
